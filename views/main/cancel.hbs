@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>	
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.15.1/moment.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.7.14/js/bootstrap-datetimepicker.min.js"></script>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.7.14/css/bootstrap-datetimepicker.min.css">
+</head>
+<body>
+		  <nav class="navbar navbar-inverse">
+		  <div class="container-fluid">
+		    <div class="navbar-header">
+		      <a class="navbar-brand"  href="#">APPS</a>
+		    </div>
+		    <ul class="nav navbar-nav">
+		      <li  ><a href="/">Schedule New Activation</a></li>
+		      <li class="active" ><a href="/cancel">Search/Cancel Scheduled Activations</a></li>
+		    </ul>
+		  </div>
+		</nav>
+	<div class="container">
+	  <h2><p class="text-center">Automated Prod-Push Scheduler</p></h2>
+	  <br></br>
+	  <div id="warning_msg">	
+	  </div> 
+	  <h4><p class="text-left">Search Scheduled Activations:</p></h4>
+	  <br></br>
+	  <form class="form-inline" action ="/search" method="POST">
+	  	<div class="row">
+
+			      <div class="form-horizontal">
+			      	<label class="control-label col-sm-2" for="config_name">Configuration Name:</label>
+			      	<div class="col-sm-10">
+			        	<input type='text' class="form-control" name  ="config_name" id="config_name"  placeholder=""/>
+			    	</div>
+			      </div>
+			      <br></br>
+			      <div class="form-horizontal">
+			      	<label class="control-label col-sm-2" for="schedule_id">Schedule ID:</label>
+			        <div class="col-sm-10"><input type='text' class="form-control" name  ="schedule_id"  id="schedule_id" placeholder=""/></div>
+			      </div>
+		 			<br></br>
+		 			<br></br>
+
+ 				 <div class="row">
+  					<div class="col-sm-12">
+    					<div class="text-center">
+      						<button type="submit" class="btn btn-primary" id="singlebutton">Search</button>
+    					</div>
+  					</div>
+				</div>
+  	  </form>		
+	</div>
+
+<script>
+
+var counter = 1;
+
+$('form').on('submit',function(){
+	var config_name = document.getElementById("config_name").value
+	var schedule_id = document.getElementById("schedule_id").value
+	if (!config_name) {
+		if (!schedule_id) {
+			if (counter == 1) {
+			       	var objTo2 = document.getElementById('warning_msg')
+					var divtest2 = document.createElement("div")
+					divtest2.innerHTML = '<p class="text-danger" >Input atleast one field to search.</p>';
+					objTo2.appendChild(divtest2)
+				};
+				counter++;
+				return false;
+			}
+			return true; 
+	}
+
+});
+
+</script>
+
+</body>
+</html>
