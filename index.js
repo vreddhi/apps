@@ -68,7 +68,7 @@ var scheduleJob = function (req, res, next) {
       db.run("CREATE TABLE IF NOT EXISTS ALL_ACTIVATIONS(job_id TEXT PRIMARY KEY, config_name TEXT, version INTEGER, date TEXT, status TEXT)",  insertData);
   };
 
-  let random_num = Math.floor(Math.random() * 1000);
+  let random_num = Math.floor(Math.random() * 10000);
   let job_id = 'test_' + random_num.toString();
 
   const insertData = () => {
@@ -88,10 +88,10 @@ var scheduleJob = function (req, res, next) {
       db.run('INSERT INTO ALL_ACTIVATIONS VALUES (?,?,?,?,?)', job_id, config_name_1, config_version_1, actvn_date_time, status, (err, success) => {
         if (err) {
           // Send a response back saying, this is a duplicate schedule
-          res.send('This is a duplicate schedule')
+          //res.send('This is a duplicate schedule')
         } else {
           //Return user to confirmation page and send email
-          next()
+          //next()
           //res.redirect(301, path.join(__dirname+'/apps_return.html'))
         }
       });
@@ -356,7 +356,7 @@ app.get('/confirm', (req,res) => {
     if (err) {
       console.log(err);
       console.log('The confirmation link is invalid.');
-      res.send('Link is Invalid');
+      //res.send('Link is Invalid');
     } else {
       //res.send('All Good.')
       rb.on('job', job => {
@@ -416,28 +416,76 @@ app.get('/confirm', (req,res) => {
 
 //POST to search activations
 var searchJob = function (req, res, next) {
-  req.config_name = req.body.config_name
+  schedule_id = req.body.schedule_id ;
   next()
 }
 
 app.use(searchJob)
 
 app.post('/search', (req, res) => {
-  responseText = req.config_name
-    res.render('main/searchresult', {responseText});
+  //console.log(res.body)
+
+  const dbPath = path.resolve(__dirname, 'apps.db')
+  let db = new sqlite3.Database(dbPath, (err) => {
+    if (err) {
+      return console.error(err.message);
+    }
+    console.log('Connected to the APPS SQlite database.');
+  });
+
+  var sql = `SELECT *
+              FROM ALL_ACTIVATIONS
+              WHERE job_id = ? `;
+  db.each(sql, [schedule_id], (err, row) => {
+    if (err) {
+      console.log(err);
+      console.log('unable to fecth data from table.');
+    } else {
+      var config_name_1 = row.config_name
+      var config_version_1 = row.version
+      var actvn_date_time = row.date
+      var schedule_id = row.job_id
+      res.render('main/searchresult', { config_name_1, config_version_1,actvn_date_time, schedule_id });
+     }
+   })
+
 })
 
 //POST to Cancel schedule
 var cancelSchedule = function (req, res, next) {
-  req.config_name = req.body.config_name_cancelled
+  schedule_id = req.body.schedule_id ;
+
   next()
 }
 
 app.use(cancelSchedule)
 
 app.post('/cancelschedule', (req, res) => {
-  responseText = req.config_name
-    res.render('main/cancelscheduleconfirmation', {responseText});
+      console.log('here5');
+
+
+  const dbPath = path.resolve(__dirname, 'apps.db')
+  let db = new sqlite3.Database(dbPath, (err) => {
+    if (err) {
+      return console.error(err.message);
+    }
+    console.log('Connected to the APPS SQlite database.');
+  });
+
+    var sql = `UPDATE ALL_ACTIVATIONS
+              SET status = 'N'
+              WHERE job_id = ?`;
+   console.log(schedule_id);          
+  db.run(sql, [schedule_id], (err, success) => {
+    if (err) {
+      console.log(err);
+      console.log('The confirmation link is invalid.');
+      res.send('Link is Invalid');
+    } else {
+    res.render('main/cancelscheduleconfirmation', {schedule_id} );
+    }
+
+    })  
 })
 
 //start server
