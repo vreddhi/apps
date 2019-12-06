@@ -40,11 +40,11 @@
 			      </div>
 			      <br></br>
 			      <div class="form-horizontal">
-			      	<label class="control-label col-sm-2" for="schedule_id">Schedule ID:</label>
+			      	<label class="control-label col-sm-2" for="schedule_id"> (OR)  Schedule ID:</label>
 			        <div class="col-sm-10"><input type='text' class="form-control" name  ="schedule_id"  id="schedule_id" placeholder=""/></div>
 			      </div>
 		 			<br></br>
-		 		<h6><p class="text-left">* Enter atleast one field to search</p></h6>
+		 		<h6><p class="text-left">* Input any one field to search</p></h6>
 
 		 			<br></br>
 
@@ -65,6 +65,22 @@ var counter = 1;
 $('form').on('submit',function(){
 	var config_name = document.getElementById("config_name").value
 	var schedule_id = document.getElementById("schedule_id").value
+
+	if (config_name) {
+		if (schedule_id) {
+			if (counter == 1) {
+			       	var objTo2 = document.getElementById('warning_msg')
+					var divtest2 = document.createElement("div")
+					divtest2.innerHTML = '<p class="text-danger" >Input only one field to search.</p>';
+					objTo2.appendChild(divtest2)
+				};
+				counter++;
+				return false;
+			}
+			return true; 
+	}
+
+
 	if (!config_name) {
 		if (!schedule_id) {
 			if (counter == 1) {
