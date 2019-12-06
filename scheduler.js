@@ -23,7 +23,7 @@ app.post('/scheduler', (req, res) => {
 
   const createTable = () => {
       console.log("create database table ALL_ACTIVATIONS");
-      db.run("CREATE TABLE IF NOT EXISTS ALL_ACTIVATIONS(job_id TEXT PRIMARY KEY, config_name TEXT, version INTEGER, date TEXT, status TEXT)",  insertData);
+      db.run("CREATE TABLE IF NOT EXISTS ALL_ACTIVATIONS(job_id TEXT PRIMARY KEY, config_name TEXT, version INTEGER, date TEXT, sdpr TEXT, reviewer TEXT, submitter TEXT, customer TEXT, notification TEXT, switchkey TEXT, network TEXT, status TEXT)",  insertData);
   };
 
   let random_num = Math.floor(Math.random() * 10000);
@@ -42,8 +42,10 @@ app.post('/scheduler', (req, res) => {
         console.log(`${row.job_id}`);
       });
       console.log("Insert data")
-      var status = 'N';
-      db.run('INSERT INTO ALL_ACTIVATIONS VALUES (?,?,?,?,?)', job_id, config_name_1, config_version_1, actvn_date_time, status, (err, success) => {
+      var status = 'PENDING';
+
+      //Before insertion we need to validate it
+      db.run('INSERT INTO ALL_ACTIVATIONS VALUES (?,?,?,?,?,?,?,?,?,?,?,?)', job_id, config_name_1, config_version_1, actvn_date_time, sdpr_link, reviewer_email, submitter_email, customer_email, notification_email, account_switch_key, actvn_network, status, (err, success) => {
         if (err) {
           // Send a response back saying, this is a duplicate schedule
           //res.send('This is a duplicate schedule')
