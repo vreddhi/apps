@@ -19,7 +19,7 @@ app.get('/confirm', (req,res) => {
   });
 
   var sql = `UPDATE ALL_ACTIVATIONS
-              SET status = 'Y'
+              SET status = 'SCHEDULED'
               WHERE job_id = ?`;
   db.run(sql, [req.query['job_id']], (err, succes) => {
     if (err) {
