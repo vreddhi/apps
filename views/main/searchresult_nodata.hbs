@@ -29,7 +29,7 @@
 	  <div id="warning_msg">	
 	  </div> 
 	  <br></br>
-	  <form class="form-inline" action ="/cancelschedule_issueredirect" method="GET">
+	  <form class="form-inline" >
 	  	<div class="row">
 	  			  <table class="table table-hover">
 				    <thead>
@@ -44,12 +44,12 @@
 				    </thead>
 				    <tbody>
 				      <tr>
-				        <td>{{config_name_1}}</td>
+				        <td>{{config_name_1}} </td>
 				        <td>{{config_version_1}}</td>
 				        <td>{{actvn_date_time}}</td>
 				        <td>{{schedule_id}}</td>
-				        <td>{{schedule_status}}</td>
-				        <td><button type="submit" class="btn btn-danger" id="singlebutton" >Cancel schedule</button></td>
+				      	<td>{{schedule_status}}</td>
+				        <td><button type="submit" class="btn btn-danger" id="singlebutton" disabled>Cancel schedule</button></td>
  						</td>
 				        <input type = "hidden" name = "schedule_id" value = "{{schedule_id}} " />
 				        <input type = "hidden" name = "config_name" value = "{{config_name_1}} " />
@@ -61,6 +61,35 @@
   	  </form>		
 	</div>
 
+  <script id="text-template" type="text/x-handlebars-template">
+    <br>#if cond1 (expected true)
+    {{#if cond1}}
+        hello
+    {{else}}
+      false
+    {{/if}}
+
+    <br>#if cond2 (expected false)
+    {{#if cond2}}
+      true
+    {{else}}
+      false
+    {{/if}}
+  </script>
+
+<script type="text/javascript">
+var data = {
+   'cond1'  : {{cond1}},
+   'cond2'  : true,
+};
+ 
+ function myFunction() {
+    var source = document.getElementById('text-template').innerHTML;
+    var template = Handlebars.compile(source);
+    var html = template(data);
+    document.getElementById('content').innerHTML = html;
+};
+</script>
 
 
 </body>

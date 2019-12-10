@@ -4,8 +4,8 @@ const sqlite3 = require('sqlite3');
 module.exports = function(app){
 
 
-app.post('/cancelschedule', (req, res) => {
-      console.log('here5');
+app.get('/cancelschedule', (req, res) => {
+      console.log('in cancelschedule.js');
 
 
   const dbPath = path.resolve(__dirname, 'apps.db')
@@ -17,7 +17,7 @@ app.post('/cancelschedule', (req, res) => {
   });
 
     var sql = `UPDATE ALL_ACTIVATIONS
-              SET status = 'N'
+              SET status = 'CANCELLED'
               WHERE job_id = ?`;
    console.log(schedule_id);          
   db.run(sql, [schedule_id], (err, success) => {

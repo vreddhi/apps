@@ -63,15 +63,29 @@ require('./confirm')(app);
 //Search activations
 var searchJob = function (req, res, next) {
   schedule_id = req.body.schedule_id ;
+  config_name = req.body.config_name ;
+
   next()
 }
 app.use(searchJob)
 require('./search')(app);
 
+//Cancel schedule
+var cancelScheduleIssueRedirect = function (req, res, next) {
+  schedule_id = req.query.schedule_id ;
+  console.log("schedule cancelScheduleIssueRedirect = "+ schedule_id)
+
+  next()
+}
+app.use(cancelScheduleIssueRedirect)
+require('./cancelschedule_issueredirect')(app);
+
+
 
 //Cancel schedule
 var cancelSchedule = function (req, res, next) {
-  schedule_id = req.body.schedule_id ;
+  schedule_id = req.query.schedule_id ;
+  console.log("schedule idd = "+ schedule_id)
 
   next()
 }
