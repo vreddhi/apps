@@ -42,30 +42,8 @@ app.get('/confirm', (req,res) => {
           var config_name = row.config_name
           var config_version = row.version
           console.log(`${row.job_id}`);
-          _edge = setup();
 
-          let searchObj = {"propertyName" : config_name }
-          //propertyDetails = _getProperty(searchObj, _edge);
-
-          let versionId = config_version;
-          console.log(config_version);
-          let env = 'STAGING';
-
-          let activation_command = 'akamai property activate ' +
-                                    config_name + ' --propVer ' +
-                                    config_version +
-                                    ' --network STAGING --email vbhat@akamai.com --account-key 1-5C0YLB';
-          exec(activation_command, (err, stdout, stderr) => {
-            if (err) {
-              // node couldn't execute the command
-              console.log(err);
-              return;
-            }
-
-            // the *entire* stdout and stderr (buffered)
-            console.log(`stdout: ${stdout}`);
-            console.log(`stderr: ${stderr}`);
-          });
+          require('./activation')(app);
           //invoke Activation
           //let activationResult = _activateProperty(searchObj, versionId, env, notes = '', email = ['vbhat@akamai.com'], acknowledgeWarnings = [], autoAcceptWarnings = true, _edge);
 
