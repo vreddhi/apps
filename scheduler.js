@@ -38,7 +38,7 @@ app.post('/scheduler', (req, res) => {
       db.each(sql, [config_name_1], (err, row) => {
         if (err) {
           console.log('Unable to fetch data from table.');
-        }
+        } 
         console.log(`${row.job_id}`);
       });
       console.log("Insert data")
