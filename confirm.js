@@ -1,3 +1,4 @@
+const activation = require('./activation.js')
 const path = require('path');
 const sqlite3 = require('sqlite3');
 var Rubidium = require('rubidium');
@@ -43,7 +44,6 @@ app.get('/confirm', (req,res) => {
           var config_version = row.version
           console.log(`${row.job_id}`);
 
-          require('./activation')(app);
           //invoke Activation
           //let activationResult = _activateProperty(searchObj, versionId, env, notes = '', email = ['vbhat@akamai.com'], acknowledgeWarnings = [], autoAcceptWarnings = true, _edge);
 
@@ -51,9 +51,32 @@ app.get('/confirm', (req,res) => {
 
       });
 
+      config_name_1 = req.body['config_name_1']
+      versionId = req.body['config_version_1']
+      env = req.body['actvn_network']
+      reviewer_email = req.body['reviewer_email']
+      submitter_email = req.body['submitter_email']
+      customer_email = req.body['customer_email']
+      notification_email = req.body['notification_email']
+      accountSwitchKey = req.body['account_switch_key']
+
+      console.log('\nNew Lines')
+      console.log(req.query.job_id)
+
+      
+      let activation_object = new activation()
+      var test_it = activation_object.testit()
+      console.log(test_it)
+      var _edge = activation_object.setup();
+      let searchObj = {"propertyName" : config_name_1 }
+      //invoke Activation
+
       rb.add({ time: Date.now() + 5000, message: 'Scheduled Activation' });
       let responseText = 'Activation is scheduled'
       res.render('main/confirmresult', {responseText});
+      console.log('Scheduling Activation now')
+      //activationResult = activation_object._activateProperty(searchObj, versionId, env, notes = '', email = [reviewer_email, submitter_email, notification_email], acknowledgeWarnings = [], autoAcceptWarnings = true, _edge, accountSwitchKey);
+      console.log('Activated')
     }
 
   });

@@ -2,15 +2,18 @@ let EdgeGrid = require('edgegrid');
 let untildify = require('untildify');
 
 
-module.exports = function(app){
-  app.get('/confirm', (req,res) => {
+class activation {
     //Function to setup EdgeAuth for API requests.
-    function setup(auth = { path: "~/.edgerc", section: "papi", debug: false, default: true}) {
+    testit() {
+      return 1
+    }
+
+    setup(auth = { path: "~/.edgerc", section: "papi", debug: false, default: true}) {
 
         if (auth.clientToken && auth.clientSecret && auth.accessToken && auth.host)
-            _edge = new EdgeGrid(auth.clientToken, auth.clientSecret, auth.accessToken, auth.host, auth.debug);
+            var _edge = new EdgeGrid(auth.clientToken, auth.clientSecret, auth.accessToken, auth.host, auth.debug);
         else
-            _edge = new EdgeGrid({
+            var _edge = new EdgeGrid({
                 path: untildify(auth.path),
                 section: auth.section,
                 debug: auth.debug
@@ -20,7 +23,7 @@ module.exports = function(app){
     }
 
     //Function to get a property
-    function _getProperty(queryObj, _edge, accountSwitchKey) {
+    _getProperty(queryObj, _edge, accountSwitchKey) {
       return new Promise((resolve, reject) => {
 
         let request = {
@@ -56,8 +59,8 @@ module.exports = function(app){
     * @returns {Promise.<TResult>}
     * @private
     */
-    function _activateProperty(propertyLookup, versionId, env = 'STAGING', notes = '', email = ['test@example.com'], acknowledgeWarnings = [], autoAcceptWarnings = true, _edge, accountSwitchKey) {
-      return _getProperty(propertyLookup, _edge, accountSwitchKey)
+    _activateProperty(propertyLookup, versionId, env = 'STAGING', notes = '', email = ['test@example.com'], acknowledgeWarnings = [], autoAcceptWarnings = true, _edge, accountSwitchKey) {
+      return this._getProperty(propertyLookup, _edge, accountSwitchKey)
           .then((data) => {
               //set basic data like contract & group
               const contractId = data.versions.items[0].contractId;
@@ -133,19 +136,6 @@ module.exports = function(app){
           });
     }
 
-    config_name_1 = req.body['config_name_1']
-    versionId = req.body['config_version_1']
-    env = req.body['actvn_network']
-    reviewer_email = req.body['reviewer_email']
-    submitter_email = req.body['submitter_email']
-    customer_email = req.body['customer_email']
-    notification_email = req.body['notification_email']
-    accountSwitchKey = req.body['account_switch_key']
-
-    _edge = setup();
-    let searchObj = {"propertyName" : config_name_1 }
-    //invoke Activation
-    activationResult = _activateProperty(searchObj, versionId, env, notes = '', email = [reviewer_email, submitter_email, notification_email], acknowledgeWarnings = [], autoAcceptWarnings = true, _edge, accountSwitchKey);
-
-  }
 }
+
+module.exports = activation
