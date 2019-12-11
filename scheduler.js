@@ -26,38 +26,40 @@ app.post('/scheduler', (req, res) => {
       console.log("create database table ALL_ACTIVATIONS");
       db.run("CREATE TABLE IF NOT EXISTS ALL_ACTIVATIONS(job_id TEXT PRIMARY KEY, config_name TEXT, \
               version INTEGER, date TEXT, sdpr TEXT, reviewer TEXT, submitter TEXT, customer TEXT, \
-              notification TEXT, switchkey TEXT, network TEXT, status TEXT)",  insertData);
+              notification TEXT, switchkey TEXT, network TEXT, status TEXT)");
   };
 
   let random_num = Math.floor(Math.random() * 10000);
-  let job_id = 'test_' + random_num.toString();
+  let job_id = 'actvn_' + random_num.toString();
 
   const insertData = () => {
-
-    var sql = `SELECT job_id job_id
-                FROM ALL_ACTIVATIONS
-                WHERE config_name = ?`;
-
+      var sql = `SELECT count(*) as total
+              FROM ALL_ACTIVATIONS
+              WHERE config_name = ? `;
+      var status = 'PENDING_APPROVAL';
       db.each(sql, [config_name_1], (err, row) => {
         if (err) {
-          console.log('Unable to fetch data from table.');
-        }
-        console.log(`${row.job_id}`);
-      });
-      console.log("Insert data")
-      var status = 'PENDING';
-
-      //Before insertion we need to validate it
-      db.run('INSERT INTO ALL_ACTIVATIONS VALUES (?,?,?,?,?,?,?,?,?,?,?,?)', job_id, config_name_1, config_version_1, actvn_date_time, sdpr_link, reviewer_email, submitter_email, customer_email, notification_email, account_switch_key, actvn_network, status, (err, success) => {
-        if (err) {
-          // Send a response back saying, this is a duplicate schedule
-          //res.send('This is a duplicate schedule')
+          console.log(err);
+          console.log('unable to fecth data from table.');
         } else {
-          //Return user to confirmation page and send email
-          //next()
-          //res.redirect(301, path.join(__dirname+'/apps_return.html'))
-        }
-      });
+          //console.log("row count = "  +row.total);
+          if (row.total == 0) {
+                  console.log('row count 0.'+ row.total);
+                  db.run('INSERT INTO ALL_ACTIVATIONS VALUES (?,?,?,?,?,?,?,?,?,?,?,?)', job_id, config_name_1, config_version_1, actvn_date_time, sdpr_link, reviewer_email, submitter_email, customer_email, notification_email, account_switch_key, actvn_network, status, (err, success) => {
+                  if (err) {
+                              console.log('error inserting data.');
+                  } else {
+                              console.log('success inserting data.');
+                  }
+                  });
+
+          } else{
+                console.log('row count NOT zero.'+ row.total);
+          };
+         }
+       })
+
+
   };
 
   var responseText = 'Config activation for  ' + req.body['config_name_1'] +
@@ -90,6 +92,7 @@ app.post('/scheduler', (req, res) => {
 
                                         responseText = 'Config activation for  ' + req.body['config_name_1'] +
                                                       ' will be scheduled subject to Reviewer\'s email approval..';
+                                          insertData();
 
                                           confirm_link = "http://localhost:3000/confirm?job_id=" + job_id
 

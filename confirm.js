@@ -40,9 +40,15 @@ app.get('/confirm', (req,res) => {
             console.log('Unable to fetch data from table.');
           }
           //console.log(`${row}`);
-          var config_name = row.config_name
-          var config_version = row.version
+          var config_name_1 = row.config_name
+          var config_version_1 = row.version
+          var actvn_date_time = row.date
+          var schedule_id = row.job_id
+          var schedule_status = row.status
           console.log(`${row.job_id}`);
+          var actvn_message = "Activation is sucessfully scheduled, details below."
+          var submit_button = "disabled"
+          res.render('main/searchresult' , { config_name_1, config_version_1,actvn_date_time, schedule_id, schedule_status,actvn_message });
 
           //invoke Activation
           //let activationResult = _activateProperty(searchObj, versionId, env, notes = '', email = ['vbhat@akamai.com'], acknowledgeWarnings = [], autoAcceptWarnings = true, _edge);
@@ -73,7 +79,7 @@ app.get('/confirm', (req,res) => {
 
       rb.add({ time: Date.now() + 5000, message: 'Scheduled Activation' });
       let responseText = 'Activation is scheduled'
-      res.render('main/confirmresult', {responseText});
+      //res.render('main/searchresult', {config_name, config_version  });
       console.log('Scheduling Activation now')
       //activationResult = activation_object._activateProperty(searchObj, versionId, env, notes = '', email = [reviewer_email, submitter_email, notification_email], acknowledgeWarnings = [], autoAcceptWarnings = true, _edge, accountSwitchKey);
       console.log('Activated')
