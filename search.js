@@ -35,7 +35,7 @@ app.post('/search', (req, res) => {
                var actvn_date_time = row.date
                var schedule_id = row.job_id
                var schedule_status = row.status
-               if (schedule_status != "ACTIVATED") {
+               if (schedule_status != "SCHEDULED") {
                  res.render('main/searchresult_nodata' , { config_name_1, config_version_1,actvn_date_time, schedule_id, schedule_status});
                } else{
                  res.render('main/searchresult', { config_name_1, config_version_1,actvn_date_time, schedule_id, schedule_status});
@@ -67,8 +67,9 @@ app.post('/search', (req, res) => {
                var actvn_date_time = row.date
                var schedule_id = row.job_id
                var schedule_status = row.status
-               if (schedule_status != "ACTIVATED") {
-                 res.render('main/searchresult_nodata' , { config_name_1, config_version_1,actvn_date_time, schedule_id, schedule_status});
+               if (schedule_status != "SCHEDULED") {
+                 var submit_button = "disabled"
+                 res.render('main/searchresult' , { config_name_1, config_version_1,actvn_date_time, schedule_id, schedule_status, submit_button});
                } else{
                  res.render('main/searchresult', { config_name_1, config_version_1,actvn_date_time, schedule_id, schedule_status});
                };

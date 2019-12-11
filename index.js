@@ -58,6 +58,22 @@ require('./scheduler')(app);
 
 //GET to confirm activation from Reviewer
 
+var confirmJob = function (req, res, next) {
+  config_name_1 = req.body['config_name_1']
+  config_version_1 = req.body['config_version_1']
+  actvn_date_time = req.body['actvn_date_time']
+  actvn_network = req.body['actvn_network']
+  sdpr_link = req.body['sdpr_link']
+  reviewer_email = req.body['reviewer_email']
+  submitter_email = req.body['submitter_email']
+  customer_email = req.body['customer_email']
+  notification_email = req.body['notification_email']
+  account_switch_key = req.body['account_switch_key']
+  console.log(req.body);
+  next()
+}
+app.use('/confirm',confirmJob)
+
 require('./confirm')(app);
 
 //Search activations
