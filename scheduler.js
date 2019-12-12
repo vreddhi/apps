@@ -35,7 +35,7 @@ app.post('/scheduler', (req, res) => {
   function insertData() {
       var sql = `SELECT count(*) as total
               FROM ALL_ACTIVATIONS
-              WHERE config_name = ? `;
+              WHERE config_name = ?  and status="SCHEDULED"`;
       var status = 'PENDING_APPROVAL';
       var result = new Boolean(false)
       db.each(sql, [config_name_1], (err, row) => {
