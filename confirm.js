@@ -22,70 +22,63 @@ app.get('/confirm', (req,res) => {
   var sql = `UPDATE ALL_ACTIVATIONS
               SET status = 'SCHEDULED'
               WHERE job_id = ?`;
-  db.run(sql, [req.query['job_id']], (err, succes) => {
+  db.run(sql, [req.query.job_id], (err, success) => {
     if (err) {
       console.log(err);
       console.log('The confirmation link is invalid.');
       //res.send('Link is Invalid');
     } else {
-      //res.send('All Good.')
-      rb.on('job', job => {
-        console.log(job.message)
-        var sql = `SELECT *
-                    FROM ALL_ACTIVATIONS
-                    WHERE job_id = ?`;
+          //res.send('All Good.')
+          var sql = `SELECT *
+                      FROM ALL_ACTIVATIONS
+                      WHERE job_id = ?`;
 
-        db.each(sql, [req.query['job_id']], (err, row) => {
-          if (err) {
-            console.log('Unable to fetch data from table.');
-          }
-          //console.log(`${row}`);
-          var config_name_1 = row.config_name
-          var config_version_1 = row.version
-          var actvn_date_time = row.date
-          var schedule_id = row.job_id
-          var schedule_status = row.status
-          console.log(`${row.job_id}`);
-          var actvn_message = "Activation is sucessfully scheduled, details below."
-          var submit_button = "disabled"
-          res.render('main/searchresult' , { config_name_1, config_version_1,actvn_date_time, schedule_id, schedule_status,actvn_message });
+          var data = [];
+          console.log(req.query.job_id)
+          db.each(sql, [req.query.job_id], (err, row) => {
+            if (err) {
+              console.log('Unable to fetch data from table.');
+            } else {
+              data.push(row);
+            }
+          }, function() {
+            console.log('****************')
+            console.log(data);
+            if(data.length < 1) {
+              //Have a no result page here
+            } else {
+              //Valid case so schedule it
+              let activation_object = new activation()
+              var _edge = activation_object.setup();
 
-          //invoke Activation
-          //let activationResult = _activateProperty(searchObj, versionId, env, notes = '', email = ['vbhat@akamai.com'], acknowledgeWarnings = [], autoAcceptWarnings = true, _edge);
+              actvn_message = 'Activatin using APPS'
+              job_id = data[0].job_id
+              status = data[0].status
+              config_name_1 = data[0].config_name
+              versionId = data[0].version
+              actvn_date_time = data[0].date
+              env = data[0].network.toUpperCase()
+              notification_email = data[0].notification
+              submitter_email = data[0].submitter
+              reviewer_email = data[0].reviewer
+              accountSwitchKey = data[0].switchkey
 
-        });
+              let searchObj = {"propertyName" : config_name_1 }
+              rb.on('job', job => {
+                  console.log('Activating config now')
+                  let activationResult = activation_object._activateProperty(searchObj, versionId, env, notes = 'APPS', email = [reviewer_email, submitter_email, notification_email], acknowledgeWarnings = [], autoAcceptWarnings = true, _edge, accountSwitchKey);
+                });
 
-      });
+              res.render('main/searchresult' , { config_name_1, versionId ,actvn_date_time, job_id, status,actvn_message });
+              rb.add({ time: Date.now() + 2000, message: 'Scheduled Activation' });
+            }
 
-      config_name_1 = req.body['config_name_1']
-      versionId = req.body['config_version_1']
-      env = req.body['actvn_network']
-      reviewer_email = req.body['reviewer_email']
-      submitter_email = req.body['submitter_email']
-      customer_email = req.body['customer_email']
-      notification_email = req.body['notification_email']
-      accountSwitchKey = req.body['account_switch_key']
+          });
 
-      console.log('\nNew Lines')
-      console.log(req.query.job_id)
+        }
 
-      
-      let activation_object = new activation()
-      var test_it = activation_object.testit()
-      console.log(test_it)
-      var _edge = activation_object.setup();
-      let searchObj = {"propertyName" : config_name_1 }
-      //invoke Activation
-
-      rb.add({ time: Date.now() + 5000, message: 'Scheduled Activation' });
-      let responseText = 'Activation is scheduled'
-      //res.render('main/searchresult', {config_name, config_version  });
-      console.log('Scheduling Activation now')
-      //activationResult = activation_object._activateProperty(searchObj, versionId, env, notes = '', email = [reviewer_email, submitter_email, notification_email], acknowledgeWarnings = [], autoAcceptWarnings = true, _edge, accountSwitchKey);
-      console.log('Activated')
-    }
+    });
 
   });
 
-});
 }
