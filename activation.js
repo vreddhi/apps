@@ -4,10 +4,6 @@ let untildify = require('untildify');
 
 class activation {
     //Function to setup EdgeAuth for API requests.
-    testit() {
-      return 1
-    }
-
     setup(auth = { path: "~/.edgerc", section: "papi", debug: false, default: true}) {
 
         if (auth.clientToken && auth.clientSecret && auth.accessToken && auth.host)
@@ -117,7 +113,7 @@ class activation {
                       messages.push(warning.messageId);
                   });
                   //TODO: check that this doesn't happen more than once...
-                  return _activateProperty(propertyLookup, versionId, env, notes, email, messages, autoAcceptWarnings = true, _edge, accountSwitchKey);
+                  return this._activateProperty(propertyLookup, versionId, env, notes, email, messages, autoAcceptWarnings = true, _edge, accountSwitchKey);
               } else
                   //TODO what about errors?
                   return new Promise((resolve, reject) => {
