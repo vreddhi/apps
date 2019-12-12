@@ -40,6 +40,7 @@ app.get('/confirm', (req,res) => {
               console.log('Unable to fetch data from table.');
             } else {
               data.push(row);
+
             }
           }, function() {
             console.log('****************')
@@ -51,7 +52,7 @@ app.get('/confirm', (req,res) => {
               let activation_object = new activation()
               var _edge = activation_object.setup();
 
-              actvn_message = 'Activatin using APPS'
+              actvn_message = 'Activation is sucessfully scheduled, details below.'
               job_id = data[0].job_id
               status = data[0].status
               config_name_1 = data[0].config_name
@@ -63,14 +64,26 @@ app.get('/confirm', (req,res) => {
               reviewer_email = data[0].reviewer
               accountSwitchKey = data[0].switchkey
 
+              config_version_1 = data[0].version
+              schedule_id = data[0].job_id
+              schedule_status = data[0].status
+              submit_button = "disabled"
+
               let searchObj = {"propertyName" : config_name_1 }
               rb.on('job', job => {
+                
+
                   console.log('Activating config now')
                   let activationResult = activation_object._activateProperty(searchObj, versionId, env, notes = 'APPS', email = [reviewer_email, submitter_email, notification_email], acknowledgeWarnings = [], autoAcceptWarnings = true, _edge, accountSwitchKey);
+
                 });
 
-              res.render('main/searchresult' , { config_name_1, versionId ,actvn_date_time, job_id, status,actvn_message });
-              rb.add({ time: Date.now() + 2000, message: 'Scheduled Activation' });
+              res.render('main/searchresult' , { config_name_1, config_version_1 ,actvn_date_time, schedule_id, schedule_status,actvn_message ,submit_button});
+              var actvn_date_time_epoch = new Date(actvn_date_time);
+              actvn_date_time_epoch = actvn_date_time_epoch.getTime();
+              console.log("actvn_date_time = "+actvn_date_time)
+              console.log("actvn_date_time_epoch = "+actvn_date_time_epoch)
+              rb.add({ time: actvn_date_time_epoch, message: 'Scheduled Activation' });
             }
 
           });
