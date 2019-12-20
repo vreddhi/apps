@@ -86,6 +86,19 @@ var searchJob = function (req, res, next) {
 app.use(searchJob)
 require('./search')(app);
 
+
+
+//Cancel schedule
+var cancelSchedule = function (req, res, next) {
+  schedule_id = req.query.schedule_id ;
+  console.log("schedule id index.js = "+ schedule_id)
+
+  next()
+}
+app.use(cancelSchedule)
+require('./cancel')(app);
+
+
 //Cancel schedule
 var cancelScheduleIssueRedirect = function (req, res, next) {
   schedule_id = req.query.schedule_id ;
@@ -97,16 +110,6 @@ app.use(cancelScheduleIssueRedirect)
 require('./cancelschedule_issueredirect')(app);
 
 
-
-//Cancel schedule
-var cancelSchedule = function (req, res, next) {
-  schedule_id = req.query.schedule_id ;
-  console.log("schedule idd = "+ schedule_id)
-
-  next()
-}
-app.use(cancelSchedule)
-require('./cancel')(app);
 
 //start server
 http.createServer(app).listen(app.get('port'), function () {
