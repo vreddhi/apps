@@ -11,7 +11,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.7.14/css/bootstrap-datetimepicker.min.css">
 </head>
-<body onload="myFunction()">
+<body >
 		  <nav class="navbar navbar-inverse">
 		  <div class="container-fluid">
 		    <div class="navbar-header">
@@ -27,7 +27,7 @@
 	  <h2><p class="text-center">Automated Prod-Push Scheduler</p></h2>
 	  <br></br>
 	  <br></br>
-	  <form class="form-inline" action ="/cancelschedule_issueredirect" method="GET">
+	  
 	  	<div class="row">
 	  			  <table class="table table-hover">
 	  			  <h5><p class="text-left">{{actvn_message}}</p></h5>
@@ -35,6 +35,7 @@
 				      <tr>
 				        <th>Configuration Name</th>
 				        <th>Version</th>
+				        <th>Network</th>
 				        <th>Schedule date & time (GMT)</th>
 				        <th>Schedule ID</th>
 				        <th>Status </th>
@@ -42,25 +43,65 @@
 				      </tr>
 				    </thead>
 				    <tbody>
+				    	{{#each data}}
+				    	<form class="form-inline" action ="/cancelschedule_issueredirect" method="GET">
 				      <tr>
-				        <td>{{config_name_1}}</td>
-				        <td>{{config_version_1}}</td>
-				        <td>{{actvn_date_time}}</td>
-				        <td>{{schedule_id}}</td>
-				        <td>{{schedule_status}}</td>
-				        <td><button type="submit" class="btn btn-danger" id="singlebutton"  {{submit_button}} >Cancel schedule</button></td>
+				        <td>{{config_name}}</td>
+				        <td>{{version}}</td>
+				        <td>{{network}}</td>
+				        <td>{{date}}</td>
+				        <td>{{job_id}}</td>
+				        <td id="{{job_id}}_status">{{status}}</td>
+				        <td><button type="button" onclick="cancelSchedule(this.id)" id="{{job_id}}" class="btn btn-danger" {{submit_status}} >Cancel schedule</button></td>
  						</td>
-				        <input type = "hidden" name = "schedule_id" value = "{{schedule_id}} " />
-				        <input type = "hidden" name = "config_name" value = "{{config_name_1}} " />
-
+				        <input type = "hidden" name = "schedule_id" value = "{{job_id}} " />
 				      </tr>
+				      </form>
+				      {{/each}}
 				    </tbody>
-				 </table>
 
-  	  </form>		
+				 </table>
+				 <div id="errormessage_{{job_id}}"></div>
+
+  	  		
 	</div>
 
+<script >
 
+
+
+function cancelSchedule(id) {
+	//alert("{{job_id}}")
+
+   var xhttp = new XMLHttpRequest();
+   xhttp.onreadystatechange = function() {
+     if (this.readyState == 4 && this.status == 200) {
+       if (this.responseText == "success") {
+
+  			var element = document.getElementById(id + "_status");
+			element.innerHTML = "CANCELLED";
+			document.getElementById(id).disabled=true;
+
+
+       }
+ 		else{
+ 			var element = document.getElementById(id + "_status");
+			element.innerHTML = "CANCELLED";
+			document.getElementById(id).disabled=true;
+ 			var errormessage = document.getElementById("errormessage_"+ id);
+ 			errormessage.innerHTML = "Server error"
+
+ 		}
+
+
+    }
+    };
+  xhttp.open("GET", "/cancelschedule?schedule_id=" + id, true);
+  xhttp.send();
+
+}
+
+</script>
 
 </body>
 </html>
