@@ -1,5 +1,7 @@
 let EdgeGrid = require('edgegrid');
 let untildify = require('untildify');
+const path = require('path');
+const sqlite3 = require('sqlite3');
 
 
 class activation {
@@ -130,6 +132,40 @@ class activation {
           .catch((error) => {
               console.log(error,'\nPromise error');
           });
+    }
+
+
+    _activateProperty_dbcheck(propertyLookup, versionId, env = 'STAGING', notes = '', email = ['test@example.com'], acknowledgeWarnings = [], autoAcceptWarnings = true, _edge, accountSwitchKey, scheduleId) {
+
+        const dbPath = path.resolve(__dirname, 'apps.db')
+        let db = new sqlite3.Database(dbPath, (err) => {
+            if (err) {
+              return console.error(err.message);
+            }
+            console.log('Connected to the APPS SQlite database.');
+          });
+
+        var total_check_sql = `select count(*) as total from ALL_ACTIVATIONS 
+                  WHERE job_id = ? and status = "SCHEDULED"`;
+        var job_id =  `${scheduleId}`           
+        console.log("scheduleId while activating = "+ job_id)            
+        db.each(total_check_sql, [job_id], (err, row) => {
+        if (err) {
+          console.log(err);
+          console.log('db execute error.');
+          res.send('error');
+        } else {
+          var total_check_sql_result = row.total  
+          if (total_check_sql_result == 1) {
+            console.log(" starting activation now")
+             let activationResult = this._activateProperty(propertyLookup, versionId, env, notes = 'APPS', email = [reviewer_email, submitter_email, notification_email], acknowledgeWarnings = [], autoAcceptWarnings = true, _edge, accountSwitchKey);
+
+          } else{
+            console.log(" cannot start activation as status changed")
+          };
+        }
+
+        });
     }
 
 }
