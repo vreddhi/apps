@@ -87,11 +87,12 @@ var total_check_sql = `select count(*) as total from ALL_ACTIVATIONS
               schedule_status = data[0].status
 
               let searchObj = {"propertyName" : config_name_1 }
+              scheduleId = data[0].job_id
               rb.on('job', job => {
                   console.log('Activating config now')
 
-                  let activationResult = activation_object._activateProperty(searchObj, versionId, env, notes = 'APPS', email = [reviewer_email, submitter_email, notification_email], acknowledgeWarnings = [], autoAcceptWarnings = true, _edge, accountSwitchKey);
-
+                  let activationResult = activation_object._activateProperty_dbcheck(searchObj, versionId, env, notes = 'APPS', email = [reviewer_email, submitter_email, notification_email], acknowledgeWarnings = [], autoAcceptWarnings = true, _edge, accountSwitchKey, scheduleId);
+    
                 });
 
               res.render('main/searchresult' , { data,actvn_message});
@@ -111,7 +112,7 @@ var total_check_sql = `select count(*) as total from ALL_ACTIVATIONS
   }
 
   function cannotApproveJob(){
-        console.log("Schedule is expired and it is no more pending approval")
+        console.log("This schedule is not awaiting your approval")
           var sql = `SELECT *
                       FROM ALL_ACTIVATIONS
                       WHERE job_id = ?`;
@@ -124,9 +125,10 @@ var total_check_sql = `select count(*) as total from ALL_ACTIVATIONS
               data.push(row);
             }
           }, function() {
-              actvn_message = 'Schedule no more pending your approval.'
+              actvn_message = 'This schedule is not awaiting your approval.'
               data[0].submit_status = "disabled"
-              res.render('main/searchresult' , { data,actvn_message});
+              text_danger = "text-danger"
+              res.render('main/searchresult' , { data,actvn_message,text_danger});
           });
 
   }

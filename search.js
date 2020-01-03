@@ -81,8 +81,9 @@ app.post('/search', (req, res) => {
                 };                
               }
             } else {
-              data.push({"config_name": "No data found", "submit_status": "disabled"})
+              data.push({"config_name": "No schedules found", "submit_status": "disabled"})
             }
+          data = data.reverse();  
           res.render('main/searchresult', { data });
         }
 

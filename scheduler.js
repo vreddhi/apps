@@ -35,10 +35,10 @@ app.post('/scheduler', (req, res) => {
   function insertData() {
       var sql = `SELECT count(*) as total
               FROM ALL_ACTIVATIONS
-              WHERE config_name = ? and status="SCHEDULED"`;
+              WHERE config_name = ? and version = ?`;
       var status = 'PENDING_APPROVAL';
       var result = new Boolean(false)
-      db.each(sql, [config_name_1], (err, row) => {
+      db.each(sql, [config_name_1],[config_version_1], (err, row) => {
         if (err) {
           console.log(err);
           console.log('unable to fecth data from table.');
@@ -53,10 +53,11 @@ app.post('/scheduler', (req, res) => {
                                 console.log('success inserting data.');
                     }
                     });
-                    result = new Boolean('true')
+                    result = new Boolean(true)
 
             } else {
                   console.log('row count NOT zero. Total Rows: '+ row.total);
+                  result = new Boolean(false)
 
             }
 
@@ -108,7 +109,7 @@ app.post('/scheduler', (req, res) => {
                                           if(data['status'] != true) {
                                               console.log('CANNOT INSERT DATA')
                                               var responseText = 'Config activation for  ' + req.body['config_name_1'] +
-                                                            ' cannot be scheduled as there is already one scheduled';
+                                                            ' v'+ req.body['config_version_1'] +'cannot be scheduled as there is already one scheduled';
                                           } else {
 
                                               responseText = 'Config activation for  ' + req.body['config_name_1'] +
