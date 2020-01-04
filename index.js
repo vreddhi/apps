@@ -6,6 +6,7 @@ var express = require('express'),
     exphbs = require('express-handlebars'),
     app=express();
 var scheduler = require('./scheduler.js')
+var confirm = require('./confirm.js')
 
 //set view engine
 
@@ -23,7 +24,6 @@ app.set('port', process.env.PORT || 3000);
 
 //GET main page
 app.get('/', function(req, res){
-    console.log('Control is in main');
     res.render('main/index');
 });
 
@@ -45,25 +45,10 @@ app.use('/scheduler',(req, res) => {
 });
 
 
-//GET to confirm activation from Reviewer
+app.use('/confirm', (req,res) => {
 
-var confirmJob = function (req, res, next) {
-  config_name_1 = req.body['config_name_1']
-  config_version_1 = req.body['config_version_1']
-  actvn_date_time = req.body['actvn_date_time']
-  actvn_network = req.body['actvn_network']
-  sdpr_link = req.body['sdpr_link']
-  reviewer_email = req.body['reviewer_email']
-  submitter_email = req.body['submitter_email']
-  customer_email = req.body['customer_email']
-  notification_email = req.body['notification_email']
-  account_switch_key = req.body['account_switch_key']
-  console.log(req.body);
-  next()
-}
-app.use('/confirm',confirmJob)
+})
 
-require('./confirm')(app);
 
 //Search activations
 var searchJob = function (req, res, next) {

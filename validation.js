@@ -55,7 +55,6 @@ class validation {
          _edge.auth(request);
          _edge.send(function (data, response) {
            if (response && response.statusCode >= 200 && response.statusCode < 400) {
-             console.log(response.body);
              let parsed = JSON.parse(response.body);
              resolve(parsed);
            } else {
@@ -66,17 +65,22 @@ class validation {
     }
 
 
-    async _checkVersionValidity(_edge, version, propertyId, groupId, contractId, account_switch_key) {
-        //Check the validity of version
-        this._getNewProperty(_edge, propertyId, groupId, contractId, account_switch_key)
-        .then((data) => {
-          if(data.properties.items[0].latestVersion < version) {
-            return Boolean(false)
-          } else {
-            //All Good
-            return Boolean(true)
-          }
-        });
+    _checkVersionValidity(_edge, version, propertyId, groupId, contractId, account_switch_key) {
+        return new Promise((resolve,reject) => {
+          this._getNewProperty(_edge, propertyId, groupId, contractId, account_switch_key)
+          .then((data) => {
+            if(data.properties.items[0].latestVersion < version) {
+              reject(Boolean(false))
+            } else {
+              //All Good
+              resolve(Boolean(true))
+            }
+          })
+          .catch((data) => {
+            console.log(data);
+            reject(data)
+          })
+        })
     }
 
 
@@ -95,41 +99,56 @@ class validation {
     * @private
     */
     _validateProperty(propertyLookup, version, _edge, accountSwitchKey) {
-      return this._searchProperty(propertyLookup, _edge, accountSwitchKey)
-          .then((data) => {
-              //set basic data like contract & group
-              var status = new Boolean(false)
-              var validation_result = {
-                "status" : status,
-                "reason" : "Unknown",
-                "contractId" : "Unknown",
-                "groupId" : "Unknown",
-                "propertyId" : "Unknown",
-                "version": -1
-              }
+      return new Promise((resolve, reject) => {
+        return this._searchProperty(propertyLookup, _edge, accountSwitchKey)
+            .then((data) => {
+                //set basic data like contract & group
+                var status = new Boolean(false)
+                var validation_result = {
+                  "status" : status,
+                  "reason" : "Unknown",
+                  "contractId" : "Unknown",
+                  "groupId" : "Unknown",
+                  "propertyId" : "Unknown",
+                  "version": -1
+                }
 
-              if(data.versions.items.length == 0) {
-                console.log('Given configuration is invalid')
-                validation_result['reason'] = "Unable to find configuration"
-              } else {
-                console.log('Given configuration is valid')
-                validation_result['reason'] = "Configuration is valid"
-                validation_result['status'] =  new Boolean('true')
-                validation_result['contractId'] = data.versions.items[0].contractId;
-                validation_result['groupId'] = data.versions.items[0].groupId;
-                validation_result['propertyId'] = data.versions.items[0].propertyId;
-              }
-              var version_validity = this._checkVersionValidity(_edge, version,
+                if(data.versions.items.length == 0) {
+                  console.log('Given configuration is invalid')
+                  validation_result['reason'] = "Unable to find configuration
+                  //No further validation, reject right away
+                  reject(validation_result)
+                } else {
+                  //Further validation needed
+                  console.log('Given configuration is valid')
+                  validation_result['reason'] = "Configuration is valid"
+                  validation_result['status'] =  new Boolean('true')
+                  validation_result['contractId'] = data.versions.items[0].contractId;
+                  validation_result['groupId'] = data.versions.items[0].groupId;
+                  validation_result['propertyId'] = data.versions.items[0].propertyId;
+
+                  //Proceed to check version validity
+                  this._checkVersionValidity(_edge, version,
                                               validation_result['propertyId'],
                                               validation_result['groupId'],
                                               validation_result['contractId'],
                                               accountSwitchKey)
-              console.log(version_validity)
-              return validation_result
-          })
-          .catch((error) => {
-              console.log(error,'\nPromise error');
-          });
+                        .then((data) => {
+                          //_checkVersionValidity passed
+                          resolve(validation_result)
+                        })
+                        .catch((data) => {
+                          //_checkVersionValidity errored out
+                          console.log(data);
+                          reject(validation_result)
+                        })
+                }
+            })
+            .catch((error) => {
+                console.log(error,'\nProperty Search error');
+            });
+      })
+
     }
 
 }

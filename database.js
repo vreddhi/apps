@@ -25,19 +25,23 @@ class database {
   * @param : table_name
   */
   createTable(table_name) {
-    console.log("create database table " + table_name);
-    this.db_connection.run('CREATE TABLE IF NOT EXISTS ' + table_name + '(job_id TEXT PRIMARY KEY, \
-                                                          config_name TEXT, \
-                                                          version INTEGER, \
-                                                          date TEXT, \
-                                                          sdpr TEXT, \
-                                                          reviewer TEXT, \
-                                                          submitter TEXT, \
-                                                          customer TEXT, \
-                                                          notification TEXT, \
-                                                          switchkey TEXT, \
-                                                          network TEXT, \
-                                                          status TEXT)');
+    return new Promise((resolve, reject) => {
+      console.log("create database table " + table_name);
+      this.db_connection.run('CREATE TABLE IF NOT EXISTS ' + table_name + '(job_id TEXT PRIMARY KEY, \
+                                                            config_name TEXT, \
+                                                            version INTEGER, \
+                                                            date TEXT, \
+                                                            sdpr TEXT, \
+                                                            reviewer TEXT, \
+                                                            submitter TEXT, \
+                                                            customer TEXT, \
+                                                            notification TEXT, \
+                                                            switchkey TEXT, \
+                                                            network TEXT, \
+                                                            status TEXT)');
+      resolve('Table Created')
+    })
+
   }
 
   /*
@@ -69,6 +73,25 @@ class database {
   }
 
   /*
+  * Below function is used to execute DB query
+  * @param : params
+  * @return : Return result
+  */
+  _execute(sql, params = []) {
+    return new Promise((resolve, reject) => {
+      this.db_connection.each(sql, params, (err, result) => {
+        if (err) {
+          console.log('Error running sql: ' + sql)
+          console.log(err)
+          reject(err)
+        } else {
+          resolve(result)
+        }
+      })
+    })
+  }
+
+  /*
   * Below function is used to insert data to a table
   * @param : table_name
   * @return : Return -1 if failed, else total rows fetched
@@ -86,7 +109,6 @@ class database {
             reject(result)
           } else {
             result = row.total
-            console.log(result)
             resolve(result)
           }
        });

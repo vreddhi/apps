@@ -3,136 +3,111 @@ const path = require('path');
 const sqlite3 = require('sqlite3');
 var Rubidium = require('rubidium');
 var rb = new Rubidium();
+var database = require('./database.js')
 
-module.exports = function(app){
+class confirm {
 
-
-app.get('/confirm', (req,res) => {
-
-
-const dbPath = path.resolve(__dirname, 'apps.db')
-  let db = new sqlite3.Database(dbPath, (err) => {
-    if (err) {
-      return console.error(err.message);
-    }
-    console.log('Connected to the APPS SQlite database.');
-  });
-
-var total_check_sql = `select count(*) as total from ALL_ACTIVATIONS 
-              WHERE job_id = ? and status = "PENDING_APPROVAL"`;
-  db.each(total_check_sql, [req.query.job_id], (err, row) => {
-    if (err) {
-      console.log(err);
-      console.log('The confirmation link is invalid.');
-      res.send('error');
-    } else {
-      var total_check_sql_result = row.total  
-      if (total_check_sql_result == 1) {
-        approveJob();
-
-      } else{
-        cannotApproveJob();
-      };
-    }
-
-    });
-
-  function approveJob(){
-
-        console.log("Activation is sucessfully scheduled, details below")
-
-          var sql = `UPDATE ALL_ACTIVATIONS
-              SET status = 'SCHEDULED'
-              WHERE job_id = ?  `;
-          db.run(sql, [req.query.job_id], (err, success) => {
-            if (err) {
-              console.log(err);
-              console.log('The confirmation link is invalid.');
-              //res.send('Link is Invalid');
-            } else {
-          //res.send('All Good.')
-          var sql = `SELECT *
-                      FROM ALL_ACTIVATIONS
-                      WHERE job_id = ?`;
-
-          var data = [];
-          console.log(req.query.job_id)
-          db.each(sql, [req.query.job_id], (err, row) => {
-            if (err) {
-              console.log('Unable to fetch data from table.');
-            } else {
-              data.push(row);
-
-            }
-          }, function() {
-            console.log('****************')
-            console.log(data);
-            if(data.length < 1) {
-              //Have a no result page here
-            } else {
-              //Valid case so schedule it
-              let activation_object = new activation()
-              var _edge = activation_object.setup();
-
-              actvn_message = 'Activation is sucessfully scheduled, details below.'
-              config_name_1 = data[0].config_name
-              versionId = data[0].version
-              actvn_date_time = data[0].date
-              env = data[0].network.toUpperCase()
-              notification_email = data[0].notification
-              submitter_email = data[0].submitter
-              reviewer_email = data[0].reviewer
-              accountSwitchKey = data[0].switchkey
-              data[0].submit_status = "disabled"
-              schedule_status = data[0].status
-
-              let searchObj = {"propertyName" : config_name_1 }
-              scheduleId = data[0].job_id
-              rb.on('job', job => {
-                  console.log('Activating config now')
-
-                  let activationResult = activation_object._activateProperty_dbcheck(searchObj, versionId, env, notes = 'APPS', email = [reviewer_email, submitter_email, notification_email], acknowledgeWarnings = [], autoAcceptWarnings = true, _edge, accountSwitchKey, scheduleId);
-    
-                });
-
-              res.render('main/searchresult' , { data,actvn_message});
-              var actvn_date_time_epoch = new Date(actvn_date_time);
-              actvn_date_time_epoch = actvn_date_time_epoch.getTime();
-              console.log("actvn_date_time = "+actvn_date_time)
-              console.log("actvn_date_time_epoch = "+actvn_date_time_epoch)
-              rb.add({ time: actvn_date_time_epoch, message: 'Scheduled Activation' });
-            }
-
-          });
-
-        }
-
-    });
-
+  /*
+  * Below constructor function is used to initialize the response text
+  * @param : request object
+  * @return : responseText
+  */
+  constructor(req){
+    this.responseText = 'Reason: Generic Error';
   }
 
-  function cannotApproveJob(){
-        console.log("This schedule is not awaiting your approval")
-          var sql = `SELECT *
-                      FROM ALL_ACTIVATIONS
-                      WHERE job_id = ?`;
-          var data = [];
-          console.log(req.query.job_id)
-          db.each(sql, [req.query.job_id], (err, row) => {
-            if (err) {
-              console.log('Unable to fetch data from table.');
-            } else {
-              data.push(row);
-            }
-          }, function() {
-              actvn_message = 'This schedule is not awaiting your approval.'
-              data[0].submit_status = "disabled"
-              text_danger = "text-danger"
-              res.render('main/searchresult' , { data,actvn_message,text_danger});
-          });
+  /*
+  * Below function is used to check DB tables and confirm the scheduling
+  * @param : request object
+  * @return : responseText
+  */
+  _setConfirmation(req) {
+    return new Promise((resolve, reject) => {
+      var db = new database();
+      db.setup()
+        .then((data) => {
+          var sql = "select count(*) as total from ALL_ACTIVATIONS
+                        WHERE job_id = ? and status = PENDING_APPROVAL";
+          db._execute(sql, [req.query.job_id])
+            .then((result) => {
+              //DB query succeeded. Proceed for further steps
+              //Get the config details from DB table
+              if(result.total == 1) {
+                var sql = `UPDATE ALL_ACTIVATIONS
+                            SET status = SCHEDULED
+                            WHERE job_id = ?`;
+                db._execute(sql, [req.query.job_id])
+                  .then((result) => {
+                    //We are not interested in DB result values
+                    //Proceed further if the query is success
+                    var sql = 'SELECT * FROM ALL_ACTIVATIONS
+                                WHERE job_id = ?';
+                    db._execute(sql, [req.query.job_id])
+                      .then((result) => {
+                        //Proceed further to schedule activation with details from database
+                        this._approveJob(result);
+                      })
+                      .catch((result) => {
+                        this.responseText = 'Reason: Unable to get details of configuration'
+                        reject(this.responseText)
+                      })
+                  })
+                  .catch((result) => {
+                    this.responseText = 'Reason: Unable to update DB during confirmation'
+                    reject(this.responseText)
+                  })
 
+              } else {
+                this.responseText = 'Activation cannot be scheduled due to mis-match in table entries.';
+                reject(this.responseText)
+              }
+            })
+            .catch((result) => {
+              console.log('Reason: Activation is not pending for APPROVAL.')
+              reject(this.responseText)
+            })
+        });
+    })
   }
 
-  });
+  /*
+  * Below function is used to check DB tables and confirm the scheduling
+  * @param : request object
+  * @return : responseText
+  */
+  _approveJob(result) {
+    return new Promise((resolve, reject) => {
+          //Validate Property one last time with API calls and schedule it
+          config_name = result[0].config_name
+          versionId = result[0].version
+          actvn_date_time = result[0].date
+          env = result[0].network.toUpperCase()
+          notification_email = result[0].notification
+          submitter_email = result[0].submitter
+          reviewer_email = result[0].reviewer
+          accountSwitchKey = result[0].switchkey
+          schedule_status = result[0].status
+
+          let searchObj = {"propertyName" : config_name }
+          scheduleId = result[0].job_id
+          rb.on('job', job => {
+              let activationResult = activation_object._activateProperty_dbcheck(
+                                      searchObj,
+                                      versionId,
+                                      env,
+                                      notes = 'APPS',
+                                      email = [reviewer_email, submitter_email, notification_email],
+                                      acknowledgeWarnings = [],
+                                      autoAcceptWarnings = true,
+                                      _edge,
+                                      accountSwitchKey,
+                                      scheduleId);
+            });
+          rb.add({ time: new Date(actvn_date_time).getTime(), message: 'Scheduled Activation' });
+          resolve('Success');
+        });
+  }
 
 }
+
+module.exports = confirm

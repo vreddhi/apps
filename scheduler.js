@@ -55,11 +55,16 @@ class scheduler {
                                                         ' will be scheduled subject to Reviewer\'s email approval..';
 
                                             var confirm_link = "http://localhost:3000/confirm?job_id=" + job_id
-                                          });
-
-                                      resolve(responseText);
+                                            resolve(responseText);
+                                          })
+                                          .catch((insert_result) => {
+                                            reject(responseText);
+                                          })
                                     }
-                                  });
+                                  })
+                                  .catch((data) => {
+                                    reject(responseText);
+                                  })
               } else {
                 reject(responseText);
               }
