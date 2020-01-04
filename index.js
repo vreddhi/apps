@@ -1,16 +1,12 @@
 const { exec } = require('child_process');
 let EdgeGrid = require('edgegrid');
 let untildify = require('untildify');
-var Rubidium = require('rubidium');
-const path = require('path');
-const sqlite3 = require('sqlite3');
-const sendmail = require('sendmail')();
 var express = require('express'),
     http=require('http'),
     exphbs = require('express-handlebars'),
     app=express();
+var scheduler = require('./scheduler.js')
 
-var rb = new Rubidium();
 //set view engine
 
 app.engine('.hbs', exphbs({
@@ -37,24 +33,17 @@ app.get('/cancel', function(req, res){
 });
 
 //To scheduler
+app.use('/scheduler',(req, res) => {
+  var schedulerObj = new scheduler(req);
+  schedulerObj.schedule()
+              .then((responseText) => {
+                res.render('main/schedulerresult', { responseText });
+              })
+              .catch((responseText) => {
+                res.render('main/schedulerresult', { responseText });
+              })
+});
 
-var scheduleJob = function (req, res, next) {
-  config_name_1 = req.body['config_name_1']
-  config_version_1 = req.body['config_version_1']
-  actvn_date_time = req.body['actvn_date_time']
-  actvn_network = req.body['actvn_network']
-  sdpr_link = req.body['sdpr_link']
-  reviewer_email = req.body['reviewer_email']
-  submitter_email = req.body['submitter_email']
-  customer_email = req.body['customer_email']
-  notification_email = req.body['notification_email']
-  account_switch_key = req.body['account_switch_key']
-  console.log(req.body);
-  next()
-}
-
-app.use('/scheduler',scheduleJob)
-require('./scheduler')(app);
 
 //GET to confirm activation from Reviewer
 

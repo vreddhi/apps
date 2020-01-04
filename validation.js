@@ -65,6 +65,21 @@ class validation {
       })
     }
 
+
+    async _checkVersionValidity(_edge, version, propertyId, groupId, contractId, account_switch_key) {
+        //Check the validity of version
+        this._getNewProperty(_edge, propertyId, groupId, contractId, account_switch_key)
+        .then((data) => {
+          if(data.properties.items[0].latestVersion < version) {
+            return Boolean(false)
+          } else {
+            //All Good
+            return Boolean(true)
+          }
+        });
+    }
+
+
     /**
     * This code is from CLI Property
     * Internal function to activate a property
@@ -104,7 +119,12 @@ class validation {
                 validation_result['groupId'] = data.versions.items[0].groupId;
                 validation_result['propertyId'] = data.versions.items[0].propertyId;
               }
-
+              var version_validity = this._checkVersionValidity(_edge, version,
+                                              validation_result['propertyId'],
+                                              validation_result['groupId'],
+                                              validation_result['contractId'],
+                                              accountSwitchKey)
+              console.log(version_validity)
               return validation_result
           })
           .catch((error) => {
