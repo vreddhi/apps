@@ -60,10 +60,13 @@ app.use('/scheduler',(req, res) => {
 app.use('/confirm', (req,res) => {
   var confirmObj = new confirm();
   confirmObj._setConfirmation(req)
-            .then((responseText) => {
+            .then((result) => {
+              responseText = result['responseText']
               res.render('main/confirmresult', { responseText });
             })
-            .catch((responseText) => {
+            .catch((result) => {}
+              //Use a different template for the failure response
+              responseText = result['responseText']
               res.render('main/confirmresult', { responseText });
             });
 });
@@ -71,8 +74,25 @@ app.use('/confirm', (req,res) => {
 
 //Route search
 app.use('./search',(req, res) => {
+  config_name = req.body.config_name
   searchObj = new search()
-  searchObj.findSchedule(req.body.schedule_id, req.body.config_name)
+  searchObj._findSchedule(req.body.config_name)
+           .then((result) => {
+              //Fetch the version, date, job_id, status from the result and use it
+              res.render('main/searchresult', { config_name,
+                                                config_version,
+                                                actvn_date_time,
+                                                schedule_id,
+                                                schedule_status});
+           })
+           .catch((result) => {
+             //This is a failure scenario. Send a dummy onbject back
+             res.render('main/searchresult_nodata' , { config_name,
+                                                       config_version_1,
+                                                       actvn_date_time,
+                                                       schedule_id,
+                                                       schedule_status});
+           })
 })
 
 
@@ -80,7 +100,13 @@ app.use('./search',(req, res) => {
 //Route cancel schedule
 app.use('/cancel', (req, res) => {
   cancelObj = new cancel()
-  cancelObj.cancelSchedule(req.query.schedule_id)
+  cancelObj._cancelSchedule(req.query.schedule_id)
+           .then((result) => {
+            //Success scenario/response
+           })
+           .catch((result) => {
+            //Failure scenario/response
+           })
 })
 
 

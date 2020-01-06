@@ -2,32 +2,46 @@ const path = require('path');
 const sqlite3 = require('sqlite3');
 
 class cancel {
+  /*
+  * Below function is used to instantiate a response object
+  *
+  */
   constructor() {
-
-      const dbPath = path.resolve(__dirname, 'apps.db')
-      let db = new sqlite3.Database(dbPath, (err) => {
-        if (err) {
-          return console.error(err.message);
-        }
-        console.log('Connected to the APPS SQlite database.');
-      });
-
-        var sql = `UPDATE ALL_ACTIVATIONS
-                  SET status = 'CANCELLED'
-                  WHERE job_id = ?`;
-       console.log("schedule_id = " + schedule_id);
-      db.run(sql, [schedule_id], (err, success) => {
-        if (err) {
-          console.log(err);
-          console.log('The confirmation link is invalid.');
-          res.send('error');
-        } else {
-          res.send("success")
-
-        }
-
-        });
+    //Initialize a negative response
+    this.response = {
+      'responseText' : 'The confirmation link is invalid.'
+    }
   }
+
+  /*
+  * Below function is used to cancel a schedule
+  * @param : scheduleId
+  */
+  _cancelSchedule(scheduleId) {
+    return new Promise((resolve, reject) => {
+      var db = new database();
+      db.setup()
+        .then((result) => {
+          var sql = `UPDATE ALL_ACTIVATIONS
+                    SET status = 'CANCELLED'
+                    WHERE job_id = ?`;
+          db._execute(sql, [scheduleId])
+            .then((result) => {
+              this.response['responseText'] = 'Successfully updated the schedule.'
+              resolve(this.response)
+            })
+            .catch((result) => {
+              this.response['responseText'] = 'The confirmation link is invalid.'
+              reject(this.response)
+            })
+        })
+        .catch((result) => {
+          reject(this.response)
+        })
+    })
+
+  }
+
 }
 
 module.exports = cancel

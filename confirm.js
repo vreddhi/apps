@@ -13,7 +13,9 @@ class confirm {
   * @return : responseText
   */
   constructor(){
-    this.responseText = 'Reason: Generic Error';
+    this.response = {
+      'responseText' : 'Reason: Generic Error'
+    }
   }
 
   /*
@@ -48,23 +50,23 @@ class confirm {
                         this._approveJob(result);
                       })
                       .catch((result) => {
-                        this.responseText = 'Reason: Unable to get details of configuration'
-                        reject(this.responseText)
+                        this.response['responseText'] = 'Reason: Unable to get details of configuration'
+                        reject(this.response)
                       })
                   })
                   .catch((result) => {
-                    this.responseText = 'Reason: Unable to update DB during confirmation'
-                    reject(this.responseText)
+                    this.response['responseText'] = 'Reason: Unable to update DB during confirmation'
+                    reject(this.response)
                   })
 
               } else {
-                this.responseText = 'Activation cannot be scheduled due to mis-match in table entries.';
-                reject(this.responseText)
+                this.response['response'] = 'Activation is already scheduled.';
+                reject(this.response)
               }
             })
             .catch((result) => {
-              console.log('Reason: Activation is not pending for APPROVAL.')
-              reject(this.responseText)
+              this.response['response'] = 'Unable to update the data table.';
+              reject(this.response)
             })
         });
     })
