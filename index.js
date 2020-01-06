@@ -7,7 +7,8 @@ var express = require('express'),
 var scheduler = require('./scheduler.js')
 var confirm = require('./confirm.js')
 var mail = require('./mail.js')
-
+var search = require('./search.js')
+var cancel = require('./cancel.js')
 //set view engine
 
 app.engine('.hbs', exphbs({
@@ -32,7 +33,7 @@ app.get('/cancel', function(req, res){
     res.render('main/cancel');
 });
 
-//To scheduler
+//Route scheduler
 app.use('/scheduler',(req, res) => {
   var schedulerObj = new scheduler(req);
   schedulerObj.schedule()
@@ -55,43 +56,37 @@ app.use('/scheduler',(req, res) => {
               })
 });
 
-
+//Route Confirmation
 app.use('/confirm', (req,res) => {
   var confirmObj = new confirm();
   confirmObj._setConfirmation(req)
             .then((responseText) => {
-              res.render('main/confirmrresult', { responseText });
+              res.render('main/confirmresult', { responseText });
             })
             .catch((responseText) => {
-              res.render('main/confirmrresult', { responseText });
+              res.render('main/confirmresult', { responseText });
             });
 });
 
 
-//Search activations
-var searchJob = function (req, res, next) {
-  schedule_id = req.body.schedule_id ;
-  config_name = req.body.config_name ;
-
-  next()
-}
-app.use(searchJob)
-require('./search')(app);
+//Route search
+app.use('./search',(req, res) => {
+  searchObj = new search()
+  searchObj.findSchedule(req.body.schedule_id, req.body.config_name)
+})
 
 
 
-//Cancel schedule
-var cancelSchedule = function (req, res, next) {
-  schedule_id = req.query.schedule_id ;
-  console.log("schedule id index.js = "+ schedule_id)
+//Route cancel schedule
+app.use('/cancel', (req, res) => {
+  cancelObj = new cancel()
+  cancelObj.cancelSchedule(req.query.schedule_id)
+})
 
-  next()
-}
-app.use(cancelSchedule)
-require('./cancel')(app);
 
 
 //Cancel schedule
+/*
 var cancelScheduleIssueRedirect = function (req, res, next) {
   schedule_id = req.query.schedule_id ;
   console.log("schedule cancelScheduleIssueRedirect = "+ schedule_id)
@@ -100,7 +95,7 @@ var cancelScheduleIssueRedirect = function (req, res, next) {
 }
 app.use(cancelScheduleIssueRedirect)
 require('./cancelschedule_issueredirect')(app);
-
+*/
 
 
 //start server
