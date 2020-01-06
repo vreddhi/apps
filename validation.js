@@ -115,7 +115,7 @@ class validation {
 
                 if(data.versions.items.length == 0) {
                   console.log('Given configuration is invalid')
-                  validation_result['reason'] = "Unable to find configuration
+                  validation_result['reason'] = "Unable to find configuration"
                   //No further validation, reject right away
                   reject(validation_result)
                 } else {

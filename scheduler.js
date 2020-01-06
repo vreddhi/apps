@@ -1,6 +1,4 @@
-var Rubidium = require('rubidium');
 var validation = require('./validation.js');
-var sendEmail = require('./mail.js');
 var database = require('./database.js')
 
 class scheduler {
@@ -19,21 +17,23 @@ class scheduler {
     this.customer_email = req.body['customer_email']
     this.notification_email = req.body['notification_email']
     this.account_switch_key = req.body['account_switch_key']
+
+    //Initialize a negative result, we will over-ride for success case
+    this.result = {
+      "responseText" : 'Activation for  ' + this.config_name +' cannot be scheduled due to validation errors.',
+      "job_id" : "Unknown"
+    }
   }
 
   schedule() {
     return new Promise((resolve, reject) => {
       var job_id = Math.floor(Math.random() * 10000).toString();
-      var rb = new Rubidium();
       //Setup Database
       var db = new database();
       db.setup()
         .then((data) => {
           console.log('Proceeding to create table')
           db.createTable('ALL_ACTIVATIONS');
-
-          //Initialize a failure response
-          var responseText = 'Activation for  ' + this.config_name +' cannot be scheduled due to validation errors.';
 
           //Validate with data table
           db.fetchRowCount('ALL_ACTIVATIONS', this.config_name, this.config_version, 'PENDING_APPROVAL')
@@ -42,31 +42,40 @@ class scheduler {
                 var validation_object = new validation()
                 var searchObj = {"propertyName" : this.config_name }
                 var _edge = validation_object.setup();
-                validation_object._validateProperty(searchObj, this.config_version, _edge, this.account_switch_key)
+                validation_object._validateProperty(searchObj,
+                                                    this.config_version,
+                                                    _edge,
+                                                    this.account_switch_key)
                                  .then((data) => {
                                     if(data['status'] == true) {
                                       //Proceed further if config is valid
-                                      db.insertData(job_id,this.config_name, this.config_version,
-                                                    this.actvn_date_time,this.sdpr_link, this.reviewer_email,
-                                                    this.submitter_email, this.customer_email,this.notification_email,
-                                                    this.account_switch_key, this.actvn_network, 'PENDING_APPROVAL')
+                                      db.insertData(job_id,this.config_name,
+                                                           this.config_version,
+                                                           this.actvn_date_time,
+                                                           this.sdpr_link,
+                                                           this.reviewer_email,
+                                                           this.submitter_email,
+                                                           this.customer_email,
+                                                           this.notification_email,
+                                                           this.account_switch_key,
+                                                           this.actvn_network,
+                                                           'PENDING_APPROVAL')
                                           .then((insert_result) => {
-                                            responseText = 'Config activation for  ' + this.config_name +
+                                            this.result['responseText'] = 'Config activation for  ' + this.config_name +
                                                         ' will be scheduled subject to Reviewer\'s email approval..';
-
-                                            var confirm_link = "http://localhost:3000/confirm?job_id=" + job_id
-                                            resolve(responseText);
+                                            this.result['job_id'] = job_id
+                                            resolve(this.result);
                                           })
                                           .catch((insert_result) => {
-                                            reject(responseText);
+                                            reject(this.result);
                                           })
                                     }
                                   })
                                   .catch((data) => {
-                                    reject(responseText);
+                                    reject(this.result);
                                   })
               } else {
-                reject(responseText);
+                reject(this.result);
               }
             });
 

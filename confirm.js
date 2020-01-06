@@ -12,7 +12,7 @@ class confirm {
   * @param : request object
   * @return : responseText
   */
-  constructor(req){
+  constructor(){
     this.responseText = 'Reason: Generic Error';
   }
 
@@ -26,22 +26,22 @@ class confirm {
       var db = new database();
       db.setup()
         .then((data) => {
-          var sql = "select count(*) as total from ALL_ACTIVATIONS
-                        WHERE job_id = ? and status = PENDING_APPROVAL";
+          var sql = `select count(*) as total from ALL_ACTIVATIONS
+                        WHERE job_id = ? and status = 'PENDING_APPROVAL'`;
           db._execute(sql, [req.query.job_id])
             .then((result) => {
               //DB query succeeded. Proceed for further steps
               //Get the config details from DB table
               if(result.total == 1) {
                 var sql = `UPDATE ALL_ACTIVATIONS
-                            SET status = SCHEDULED
+                            SET status = 'SCHEDULED'
                             WHERE job_id = ?`;
                 db._execute(sql, [req.query.job_id])
                   .then((result) => {
                     //We are not interested in DB result values
                     //Proceed further if the query is success
-                    var sql = 'SELECT * FROM ALL_ACTIVATIONS
-                                WHERE job_id = ?';
+                    var sql = `SELECT * FROM ALL_ACTIVATIONS
+                                WHERE job_id = ?`;
                     db._execute(sql, [req.query.job_id])
                       .then((result) => {
                         //Proceed further to schedule activation with details from database

@@ -1,4 +1,3 @@
-const { exec } = require('child_process');
 let EdgeGrid = require('edgegrid');
 let untildify = require('untildify');
 var express = require('express'),
@@ -7,6 +6,7 @@ var express = require('express'),
     app=express();
 var scheduler = require('./scheduler.js')
 var confirm = require('./confirm.js')
+var mail = require('./mail.js')
 
 //set view engine
 
@@ -36,18 +36,36 @@ app.get('/cancel', function(req, res){
 app.use('/scheduler',(req, res) => {
   var schedulerObj = new scheduler(req);
   schedulerObj.schedule()
-              .then((responseText) => {
-                res.render('main/schedulerresult', { responseText });
+              .then((result) => {
+                //Succeeded with all validations. Send email to reviewer
+                //Get the job_id from secheduler response and construct HTML
+                console.log(result)
+                sendEmails = new mail()._triggerEmails(schedulerObj, job_id=result['job_id'])
+                                       .catch((emailResult) => {
+                                         result['responseText'] = result['responseText'] +
+                                                                  '.\nUnable to send emails'
+                                       })
+                response = result['responseText']
+                res.render('main/schedulerresult', { response });
               })
-              .catch((responseText) => {
-                res.render('main/schedulerresult', { responseText });
+              .catch((result) => {
+                console.log(result)
+                response = result['responseText']
+                res.render('main/schedulerresult', { response });
               })
 });
 
 
 app.use('/confirm', (req,res) => {
-
-})
+  var confirmObj = new confirm();
+  confirmObj._setConfirmation(req)
+            .then((responseText) => {
+              res.render('main/confirmrresult', { responseText });
+            })
+            .catch((responseText) => {
+              res.render('main/confirmrresult', { responseText });
+            });
+});
 
 
 //Search activations
