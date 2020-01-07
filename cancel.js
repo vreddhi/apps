@@ -1,5 +1,6 @@
 const path = require('path');
 const sqlite3 = require('sqlite3');
+var database = require('./database.js')
 
 class cancel {
   /*

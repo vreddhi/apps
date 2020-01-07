@@ -1,6 +1,6 @@
 const path = require('path');
 const sqlite3 = require('sqlite3');
-
+var database = require('./database.js')
 
 class search {
   /*
@@ -27,10 +27,10 @@ class search {
             var sql = `SELECT *
                     FROM ALL_ACTIVATIONS
                     WHERE config_name = ? `;
-            db._execute(sql, [config_name])
+            db._fetchMultipleRows(sql, [config_name])
               .then((result) => {
-                //Have the code here to push rows to dataStructure and return it to index.js
-                //this.response['queryResult'].push()
+                //DB Query response is a list/array of rows
+                this.response['queryResult'] = result
                 resolve(this.response)
               })
               .catch((result) => {

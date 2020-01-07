@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html>
-<head>	
+<head>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.15.1/moment.min.js"></script>
@@ -26,41 +26,17 @@
 	<div class="container">
 	  <h2><p class="text-center">Automated Prod-Push Scheduler</p></h2>
 	  <br></br>
-	  <div id="warning_msg">	
-	  </div> 
+	  <div id="warning_msg">
+	  </div>
 	  <br></br>
-	  <form class="form-inline" >
-	  	<div class="row">
-	  			  <table class="table table-hover">
-	 				 <h5><p class="text-left">{{actvn_message}}</p></h5>
-				    <thead>
-				      <tr>
-				        <th>Configuration Name</th>
-				        <th>Version</th>
-				        <th>Schedule date & time</th>
-				        <th>Schedule ID</th>
-				        <th>Status </th>
-				        <th>Action</th>
-				      </tr>
-				    </thead>
-				    <tbody>
-				      <tr>
-				        <td>{{data.0.config_version}}</td>
-				        <td>{{data.1.config_version}}</td>
-				        <td>{{actvn_date_time}}</td>
-				        <td>{{schedule_id}}</td>
-				      	<td>{{schedule_status}}</td>
-				        <td><button type="submit" class="btn btn-danger" id="singlebutton" disabled>Cancel schedule</button></td>
- 						</td>
-				        <input type = "hidden" name = "schedule_id" value = "{{schedule_id}} " />
-				        <input type = "hidden" name = "config_name" value = "{{config_name_1}} " />
-
-				      </tr>
-				    </tbody>
-				 </table>
-
-  	  </form>		
 	</div>
+
+	<div class="container">
+		<div class="row">
+				{{responseText}}
+		</div>
+	</div>	
+
 
 </body>
 </html>

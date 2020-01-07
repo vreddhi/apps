@@ -64,7 +64,7 @@ app.use('/confirm', (req,res) => {
               responseText = result['responseText']
               res.render('main/confirmresult', { responseText });
             })
-            .catch((result) => {}
+            .catch((result) => {
               //Use a different template for the failure response
               responseText = result['responseText']
               res.render('main/confirmresult', { responseText });
@@ -73,25 +73,26 @@ app.use('/confirm', (req,res) => {
 
 
 //Route search
-app.use('./search',(req, res) => {
+app.use('/search',(req, res) => {
   config_name = req.body.config_name
   searchObj = new search()
   searchObj._findSchedule(req.body.config_name)
            .then((result) => {
               //Fetch the version, date, job_id, status from the result and use it
-              res.render('main/searchresult', { config_name,
-                                                config_version,
-                                                actvn_date_time,
-                                                schedule_id,
-                                                schedule_status});
+              var dataRows = result['queryResult']
+              if(dataRows.length < 1) {
+                //We got NOTHING to display
+                var responseText = 'Activation details of ' + req.body.config_name + ' configuration is not found'
+                res.render('main/searchFailure' , { responseText } );
+              } else {
+                //We got some results to display
+                res.render('main/searchresult', { dataRows } );
+              }
            })
            .catch((result) => {
-             //This is a failure scenario. Send a dummy onbject back
-             res.render('main/searchresult_nodata' , { config_name,
-                                                       config_version_1,
-                                                       actvn_date_time,
-                                                       schedule_id,
-                                                       schedule_status});
+             //This is a failure scenario. _findSchedule function resulted in Failure for some reason
+             var responseText = 'Activation details of ' + req.body.config_name + ' Configuration is not found'
+             res.render('main/searchFailure' , { responseText } );
            })
 })
 

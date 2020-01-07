@@ -91,6 +91,26 @@ class database {
     })
   }
 
+
+  /*
+  * Below function is used to fetch multiple rows
+  * @param : params
+  * @return : Return result with multiple row
+  */
+  _fetchMultipleRows(sql, params = []) {
+    return new Promise((resolve, reject) => {
+      this.db_connection.all(sql, params, (err, result) => {
+        if (err) {
+          console.log('Error running sql: ' + sql)
+          console.log(err)
+          reject(err)
+        } else {
+          resolve(result)
+        }
+      })
+    })
+  }
+
   /*
   * Below function is used to insert data to a table
   * @param : table_name
