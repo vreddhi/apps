@@ -43,7 +43,7 @@
 				    </thead>
 				    <tbody>
 				    	{{#each dataRows}}
-				    	<form class="form-inline" action ="/cancelschedule_issueredirect" method="GET">
+				    	<form class="form-inline" action ="/cancel" method="GET">
 				      <tr>
 				        <td>{{config_name}}</td>
 				        <td>{{version}}</td>
@@ -53,7 +53,7 @@
 				        <td id="{{job_id}}_status">{{status}}</td>
 				        <td><button type="button" onclick="cancelSchedule(this.id)" id="{{job_id}}" class="btn btn-danger" {{submit_status}} >Cancel schedule</button></td>
  						</td>
-				        <input type = "hidden" name = "schedule_id" value = "{{job_id}} " />
+				        <input type = "hidden" name = "job_id" value = "{{job_id}} " />
 				      </tr>
 				      </form>
 				      {{/each}}
@@ -70,7 +70,6 @@
 
 
 function cancelSchedule(id) {
-	//alert("{{job_id}}")
 
    var xhttp = new XMLHttpRequest();
    xhttp.onreadystatechange = function() {
@@ -95,7 +94,7 @@ function cancelSchedule(id) {
 
     }
     };
-  xhttp.open("GET", "/cancelschedule?schedule_id=" + id, true);
+  xhttp.open("GET", "/cancel?job_id=" + id, true);
   xhttp.send();
 
 }

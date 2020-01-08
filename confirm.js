@@ -44,7 +44,7 @@ class confirm {
                     //Proceed further if the query is success
                     var sql = `SELECT * FROM ALL_ACTIVATIONS
                                 WHERE job_id = ?`;
-                    db._execute(sql, [req.query.job_id])
+                    db._fetchMultipleRows(sql, [req.query.job_id])
                       .then((result) => {
                         //Proceed further to schedule activation with details from database
                         this._approveJob(result);

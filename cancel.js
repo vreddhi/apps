@@ -18,7 +18,7 @@ class cancel {
   * Below function is used to cancel a schedule
   * @param : scheduleId
   */
-  _cancelSchedule(scheduleId) {
+  _cancelSchedule(job_id) {
     return new Promise((resolve, reject) => {
       var db = new database();
       db.setup()
@@ -26,7 +26,8 @@ class cancel {
           var sql = `UPDATE ALL_ACTIVATIONS
                     SET status = 'CANCELLED'
                     WHERE job_id = ?`;
-          db._execute(sql, [scheduleId])
+          console.log(job_id)
+          db._updateTable(sql, [job_id])
             .then((result) => {
               this.response['responseText'] = 'Successfully updated the schedule.'
               resolve(this.response)

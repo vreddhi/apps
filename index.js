@@ -28,10 +28,6 @@ app.get('/', function(req, res){
     res.render('main/index');
 });
 
-//GET search/cancel page
-app.get('/cancel', function(req, res){
-    res.render('main/cancel');
-});
 
 //Route scheduler
 app.use('/scheduler',(req, res) => {
@@ -101,7 +97,7 @@ app.use('/search',(req, res) => {
 //Route cancel schedule
 app.use('/cancel', (req, res) => {
   cancelObj = new cancel()
-  cancelObj._cancelSchedule(req.query.schedule_id)
+  cancelObj._cancelSchedule(req.query.job_id)
            .then((result) => {
             //Success scenario/response
            })
