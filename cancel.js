@@ -26,9 +26,9 @@ class cancel {
           var sql = `UPDATE ALL_ACTIVATIONS
                     SET status = 'CANCELLED'
                     WHERE job_id = ?`;
-          console.log(job_id)
           db._updateTable(sql, [job_id])
             .then((result) => {
+              console.log('DB Success')
               this.response['responseText'] = 'Successfully updated the schedule.'
               resolve(this.response)
             })

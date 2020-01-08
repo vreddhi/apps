@@ -14,11 +14,11 @@
 		  <nav class="navbar navbar-inverse">
 		  <div class="container-fluid">
 		    <div class="navbar-header">
-		      <a class="navbar-brand"  href="#">APPS</a>
+		      <a class="navbar-brand"  href="/">APPS</a>
 		    </div>
 		    <ul class="nav navbar-nav">
 		      <li  ><a href="/">Schedule New Activation</a></li>
-		      <li class="active" ><a href="/cancel">Search/Cancel Scheduled Activations</a></li>
+		      <li class="active" ><a href="/search">Search/Cancel Scheduled Activations</a></li>
 		    </ul>
 		  </div>
 		</nav>
@@ -29,7 +29,7 @@
 	  </div>
 	  <h4><p class="text-left">Search Scheduled Activations:</p></h4>
 	  <br></br>
-	  <form class="form-inline" action ="/search" method="POST">
+	  <form class="form-inline" action ="/searchandcancel" method="POST">
 	  	<div class="row">
 
 			      <div class="form-horizontal">
@@ -41,47 +41,5 @@
 			      </div>
   	  </form>
 	</div>
-
-<script>
-
-var counter = 1;
-
-$('form').on('submit',function(){
-	var config_name = document.getElementById("config_name").value
-	var schedule_id = document.getElementById("schedule_id").value
-
-	if (config_name) {
-		if (schedule_id) {
-			if (counter == 1) {
-			       	var objTo2 = document.getElementById('warning_msg')
-					var divtest2 = document.createElement("div")
-					divtest2.innerHTML = '<p class="text-danger" >Input only one field to search.</p>';
-					objTo2.appendChild(divtest2)
-				};
-				counter++;
-				return false;
-			}
-			return true;
-	}
-
-
-	if (!config_name) {
-		if (!schedule_id) {
-			if (counter == 1) {
-			       	var objTo2 = document.getElementById('warning_msg')
-					var divtest2 = document.createElement("div")
-					divtest2.innerHTML = '<p class="text-danger" >Input atleast one field to search.</p>';
-					objTo2.appendChild(divtest2)
-				};
-				counter++;
-				return false;
-			}
-			return true;
-	}
-
-});
-
-</script>
-
 </body>
 </html>

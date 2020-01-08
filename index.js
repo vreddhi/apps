@@ -69,7 +69,12 @@ app.use('/confirm', (req,res) => {
 
 
 //Route search
-app.use('/search',(req, res) => {
+app.use('/search', (req, res) => {
+  res.render('main/search.hbs')
+})
+
+//Route search and cancel
+app.use('/searchandcancel',(req, res) => {
   config_name = req.body.config_name
   searchObj = new search()
   searchObj._findSchedule(req.body.config_name)
@@ -100,6 +105,7 @@ app.use('/cancel', (req, res) => {
   cancelObj._cancelSchedule(req.query.job_id)
            .then((result) => {
             //Success scenario/response
+            //console.log(result)
            })
            .catch((result) => {
             //Failure scenario/response
