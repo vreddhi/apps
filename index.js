@@ -9,6 +9,8 @@ var confirm = require('./confirm.js')
 var mail = require('./mail.js')
 var search = require('./search.js')
 var cancel = require('./cancel.js')
+var database = require('./database.js')
+
 //set view engine
 
 app.engine('.hbs', exphbs({
@@ -87,6 +89,15 @@ app.use('/searchandcancel',(req, res) => {
                 res.render('main/searchFailure' , { responseText } );
               } else {
                 //We got some results to display
+                // Sending cancel_button_status to views to disable Cancel button for status anything other than PENDING_APPROVAL or SCHEDULED
+                var arrayLength = dataRows.length;
+                if (arrayLength != 0) {
+                    for (var i = 0; i < arrayLength; i++) {
+                    if (dataRows[i].status != "PENDING_APPROVAL" && dataRows[i].status != "SCHEDULED") {
+                      dataRows[i].cancel_button_status = "disabled";
+                    };
+                  }
+                }
                 res.render('main/searchresult', { dataRows } );
               }
            })
@@ -98,7 +109,6 @@ app.use('/searchandcancel',(req, res) => {
 })
 
 
-
 //Route cancel schedule
 app.use('/cancel', (req, res) => {
   cancelObj = new cancel()
@@ -106,6 +116,8 @@ app.use('/cancel', (req, res) => {
            .then((result) => {
             //Success scenario/response
             //console.log(result)
+            //send success if cancel db update is success
+            res.send("success")
            })
            .catch((result) => {
             //Failure scenario/response
