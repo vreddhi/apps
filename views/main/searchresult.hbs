@@ -3,14 +3,11 @@
 <head>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.15.1/moment.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.7.14/js/bootstrap-datetimepicker.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/3.0.1/handlebars.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.7.14/css/bootstrap-datetimepicker.min.css">
+
 </head>
 <body >
 		  <nav class="navbar navbar-inverse">
@@ -30,7 +27,6 @@
 	  <br></br>
 	  	<div class="row">
 	  			  <table class="table table-hover">
-	  			  <h5><p class="text-left {{text_danger}}">{{actvn_message}}</p></h5>
 				    <thead>
 				      <tr>
 				        <th>Configuration Name</th>
@@ -52,13 +48,8 @@
 				        <td>{{date}}</td>
 				        <td>{{job_id}}</td>
 				        <td id="{{job_id}}_status">{{status}}</td>
-								<td>
-									<button class="btn btn-primary" type="button" disabled>
-									  <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-									  Loading...
-									</button>
-							</td>
 				        <!--td><button type="button" onclick="cancelSchedule(this.id)" id="{{job_id}}" class="btn btn-danger">Cancel schedule</button></td-->
+								<td><button type="button" class="btn btn-danger btn-lg " id="{{job_id}}" data-loading-text="<i class='fa fa-circle-o-notch fa-spin'></i> Cancelling Job">Cancel schedule</button></td>
  								</td>
 				        <input type = "hidden" name = "job_id" value = "{{job_id}} " />
 				      </tr>
@@ -74,10 +65,26 @@
 
 <script >
 
+function transferComplete(evt) {
+	console.log('The transfer is complete.')
+}
 
+$('.btn').on('click', function() {
+		var $this = $(this);
+		$this.button('loading');
+		var xhttp = new XMLHttpRequest();
+		xhttp.addEventListener("load", transferComplete);
+		xhttp.open("GET", "/cancel?job_id=" + $this.id, true);
+		xhttp.send();
+
+
+		setTimeout(function() {
+			 $this.button('reset');
+	 }, 8000);
+});
 
 function cancelSchedule(id) {
-
+	/*
    var xhttp = new XMLHttpRequest();
    xhttp.onreadystatechange = function() {
      if (this.readyState == 4 && this.status == 200) {
@@ -103,6 +110,7 @@ function cancelSchedule(id) {
     };
   xhttp.open("GET", "/cancel?job_id=" + id, true);
   xhttp.send();
+	*/
 
 }
 
