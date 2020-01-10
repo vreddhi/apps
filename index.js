@@ -11,16 +11,21 @@ var search = require('./search.js')
 var cancel = require('./cancel.js')
 var database = require('./database.js')
 
+
+var hbs = exphbs.create({
+    helpers: {
+        buttonClass: function (status) {
+            return '';
+        }
+    },
+    defaultLayout: 'default',
+    layoutsDir:"views/layouts/",
+    extname:'.hbs'
+});
+
+app.engine('.hbs', hbs.engine);
+
 //set view engine
-
-app.engine('.hbs', exphbs({
-
-    defaultLayout:'default', //specifying the file name of our default template
-    layoutsDir:"views/layouts/", //specifying the directory where layouts are saved
-    extname:'.hbs' //defining file extension. if not specified, the default is 'handlebars'
-
-}));
-
 app.set('view engine', '.hbs');
 app.use(express.urlencoded())
 app.set('port', process.env.PORT || 3000);
@@ -89,16 +94,24 @@ app.use('/searchandcancel',(req, res) => {
                 res.render('main/searchFailure' , { responseText } );
               } else {
                 //We got some results to display
-                // Sending cancel_button_status to views to disable Cancel button for status anything other than PENDING_APPROVAL or SCHEDULED
-                var arrayLength = dataRows.length;
-                if (arrayLength != 0) {
-                    for (var i = 0; i < arrayLength; i++) {
-                    if (dataRows[i].status != "PENDING_APPROVAL" && dataRows[i].status != "SCHEDULED") {
-                      dataRows[i].cancel_button_status = "disabled";
-                    };
-                  }
-                }
-                res.render('main/searchresult', { dataRows } );
+                res.render('main/searchresult', {dataRows,
+                                                // Override `foo` helper only for this rendering.
+                                                helpers: {
+                                                            buttonClass: function (status, value='') {
+                                                              if(status == 'CANCELLED'){
+                                                                if(value == 'value') {
+                                                                  return 'CANCELLED'
+                                                                }
+                                                                return 'disabled';
+                                                              } else {
+                                                                if(value == 'value') {
+                                                                  return 'CANCEL'
+                                                                }
+                                                                return '';
+                                                              }
+                                                            }
+                                                          }
+                                                });
               }
            })
            .catch((result) => {
@@ -115,12 +128,12 @@ app.use('/cancel', (req, res) => {
   cancelObj._cancelSchedule(req.query.job_id)
            .then((result) => {
             //Success scenario/response
-            //console.log(result)
-            //send success if cancel db update is success
-            res.send("success")
+            console.log(result['updatedRows'])
+            res.json({ 'updatedRows': result['updatedRows']})
            })
            .catch((result) => {
             //Failure scenario/response
+            res.json({ 'updatedRows': null})
            })
 })
 

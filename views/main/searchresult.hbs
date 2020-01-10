@@ -47,10 +47,9 @@
 				        <td>{{network}}</td>
 				        <td>{{date}}</td>
 				        <td>{{job_id}}</td>
-				        <td id="{{job_id}}_status">{{status}}</td>
-				        <!--td><button type="button" onclick="cancelSchedule(this.id)" id="{{job_id}}" class="btn btn-danger">Cancel schedule</button></td-->
-								<td><button type="button" class="btn btn-danger btn-lg " id="{{job_id}}" data-loading-text="<i class='fa fa-circle-o-notch fa-spin'></i> Cancelling Job">Cancel schedule</button></td>
- 								</td>
+				        <td id="status_{{job_id}}">{{status}}</td>
+						    <td><button type="button" class="btn btn-danger btn-lg" id="{{job_id}}" data-complete-text="<i class='fa fa-circle-o-notch fa-spin'></i> CANCELLED" data-cancelling-text="<i class='fa fa-circle-o-notch fa-spin'></i> Cancelling Job" {{buttonClass status}}>{{buttonClass status "value"}}</button></td>
+								</td>
 				        <input type = "hidden" name = "job_id" value = "{{job_id}} " />
 				      </tr>
 				      </form>
@@ -65,54 +64,31 @@
 
 <script >
 
-function transferComplete(evt) {
-	console.log('The transfer is complete.')
-}
 
 $('.btn').on('click', function() {
-		var $this = $(this);
-		$this.button('loading');
-		var xhttp = new XMLHttpRequest();
-		xhttp.addEventListener("load", transferComplete);
-		xhttp.open("GET", "/cancel?job_id=" + $this.id, true);
-		xhttp.send();
-
-
-		setTimeout(function() {
-			 $this.button('reset');
-	 }, 8000);
+	 var job_id = this.id;
+	 var $this = $(this);
+	 $this.button('cancelling');
+	 var xhr = new XMLHttpRequest();
+	 xhr.open("GET", "/cancel?job_id=" + job_id, true);
+	 xhr.onload = function (e) {
+	   if (xhr.readyState === 4) {
+	     if (xhr.status === 200) {
+	       console.log(xhr.responseText);
+				 setTimeout(function() {
+				 	 $this.button('complete');
+					 document.getElementById("status_" + job_id).innerHTML = "CANCELLED";
+				 }, 3000);
+	     } else {
+	       console.error(xhr.statusText);
+	     }
+	   }
+	 };
+	 xhr.onerror = function (e) {
+	   console.error(xhr.statusText);
+	 };
+	 xhr.send(null);
 });
-
-function cancelSchedule(id) {
-	/*
-   var xhttp = new XMLHttpRequest();
-   xhttp.onreadystatechange = function() {
-     if (this.readyState == 4 && this.status == 200) {
-       if (this.responseText == "success") {
-
-  			var element = document.getElementById(id + "_status");
-			element.innerHTML = "CANCELLED";
-			document.getElementById(id).disabled=true;
-
-
-       }
- 		else{
- 			var element = document.getElementById(id + "_status");
-			element.innerHTML = "CANCELLED";
-			document.getElementById(id).disabled=true;
- 			var errormessage = document.getElementById("errormessage_"+ id);
- 			errormessage.innerHTML = "Server error"
-
- 		}
-
-
-    }
-    };
-  xhttp.open("GET", "/cancel?job_id=" + id, true);
-  xhttp.send();
-	*/
-
-}
 
 </script>
 

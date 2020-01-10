@@ -10,7 +10,8 @@ class cancel {
   constructor() {
     //Initialize a negative response
     this.response = {
-      'responseText' : 'The confirmation link is invalid.'
+      'responseText' : 'The confirmation link is invalid.',
+      'updatedRows' : ''
     }
   }
 
@@ -25,11 +26,11 @@ class cancel {
         .then((result) => {
           var sql = `UPDATE ALL_ACTIVATIONS
                     SET status = 'CANCELLED'
-                    WHERE job_id = ?`;
+                    WHERE job_id = ? AND status != 'CANCELLED'`;
           db._updateTable(sql, [job_id])
             .then((result) => {
-              console.log('DB Success')
               this.response['responseText'] = 'Successfully updated the schedule.'
+              this.response['updatedRows'] = result
               resolve(this.response)
             })
             .catch((result) => {

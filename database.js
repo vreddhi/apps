@@ -118,13 +118,14 @@ class database {
   */
   _updateTable(sql, params = []) {
     return new Promise((resolve, reject) => {
-      this.db_connection.run(sql, params, (err, result) => {
+      this.db_connection.run(sql, params, function(err, result) {
         if (err) {
           console.log('Error running sql: ' + sql)
           console.log(err)
           reject(err)
         } else {
-          resolve(result)
+          //changes is the property of sqlite3 library
+          resolve(this.changes)
         }
       })
     })
