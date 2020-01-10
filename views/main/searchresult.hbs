@@ -78,6 +78,7 @@ $('.btn').on('click', function() {
 				 setTimeout(function() {
 				 	 $this.button('complete');
 					 document.getElementById("status_" + job_id).innerHTML = "CANCELLED";
+					 document.getElementById(job_id).disabled=true;
 				 }, 3000);
 	     } else {
 	       console.error(xhr.statusText);
