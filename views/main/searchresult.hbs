@@ -2,11 +2,15 @@
 <html>
 <head>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/3.0.1/handlebars.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
+
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css">
+
 
 </head>
 <body >
@@ -24,9 +28,8 @@
 	<div class="container">
 	  <h2><p class="text-center">Automated Prod-Push Scheduler</p></h2>
 	  <br></br>
-	  <br></br>
 	  	<div class="row">
-	  			  <table class="table table-hover">
+	  			  <table class="display" id="example">
 				    <thead>
 				      <tr>
 				        <th>Configuration Name</th>
@@ -48,7 +51,7 @@
 				        <td>{{date}}</td>
 				        <td>{{job_id}}</td>
 				        <td id="status_{{job_id}}">{{status}}</td>
-						    <td><button type="button" class="btn btn-danger btn-lg" id="{{job_id}}" data-complete-text="<i class='fa fa-circle-o-notch fa-spin'></i> CANCELLED" data-cancelling-text="<i class='fa fa-circle-o-notch fa-spin'></i> Cancelling Job" {{buttonClass status}}>{{buttonClass status "value"}}</button></td>
+						    <td><button type="button" class="btn btn-danger btn-lg" id="{{job_id}}" data-complete-text="<i class='fa fa-circle-o-notch fa-spin'></i> CANCELLED" data-cancelling-text="<i class='fa fa-circle-o-notch fa-spin'></i> Cancelling Job" {{buttonClass status}}>{{buttonValue status}}</button></td>
 								</td>
 				        <input type = "hidden" name = "job_id" value = "{{job_id}} " />
 				      </tr>
@@ -64,6 +67,9 @@
 
 <script >
 
+$(document).ready(function() {
+  $('#example').DataTable();
+});
 
 $('.btn').on('click', function() {
 	 var job_id = this.id;

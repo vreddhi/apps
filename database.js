@@ -21,6 +21,18 @@ class database {
   }
 
   /*
+  * Below function is used to instantiate the database
+  *
+  */
+  _shutdown() {
+    return new Promise((resolve,reject) => {
+        this.db_connection.close(function callbacK() {
+          resolve('DB Connection closed')
+        })
+    });
+  }
+
+  /*
   * Below function is used to create a table
   * @param : table_name
   */

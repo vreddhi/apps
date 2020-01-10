@@ -16,6 +16,9 @@ var hbs = exphbs.create({
     helpers: {
         buttonClass: function (status) {
             return '';
+        },
+        buttonValue: function (status) {
+           return '';
         }
     },
     defaultLayout: 'default',
@@ -94,45 +97,24 @@ app.use('/searchandcancel',(req, res) => {
                 res.render('main/searchFailure' , { responseText } );
               } else {
                 //We got some results to display
-                //Sort the dataRows in the order of PENDING_APPROVAL, SCHEDULED and others
-                var dataRowsSorted = [];
-                var dataRowsLength = dataRows.length;
-\                if (dataRowsLength != 0) {
-                    for (var i = 0; i < dataRowsLength; i++) {
-                    if (dataRows[i].status == "PENDING_APPROVAL") {
-                      dataRowsSorted.push(dataRows[i]);
-                      };
-                    }
-                    for (var i = 0; i < dataRowsLength; i++) {
-                    if (dataRows[i].status == "SCHEDULED") {
-                      dataRowsSorted.push(dataRows[i]);
-                      };
-                    }
-                    for (var i = 0; i < dataRowsLength; i++) {
-                    if (dataRows[i].status != "PENDING_APPROVAL"  && dataRows[i].status != "SCHEDULED") {
-                      dataRowsSorted.push(dataRows[i]);
-                      };
-                    }
-                }
-                res.render('main/searchresult', {dataRowsSorted,
+                res.render('main/searchresult', {dataRows,
                                                 // Override `foo` helper only for this rendering.
                                                 helpers: {
-                                                            buttonClass: function (status, value='') {
-                                                              if(status == 'CANCELLED'){
-                                                                if(value == 'value') {
-                                                                  return 'CANCELLED'
-                                                                }
-                                                                return 'disabled';
-                                                              }
-                                                              if(status === 'SCHEDULED' | status === 'PENDING_APPROVAL'){
-                                                                if(value == 'value') {
-                                                                  return 'CANCEL'
-                                                                }
+                                                            buttonClass: function (status) {
+                                                              //If one of below values, disable the button by returning bootstrap class
+                                                              if(['CANCELLED','FAILED','COMPLETED'].indexOf(status) > -1) {
+                                                                return 'disabled'
                                                               } else {
-                                                                if(value == 'value') {
-                                                                  return 'CANCEL'
-                                                                }
-                                                                return 'disabled';
+                                                                return ''
+                                                              }
+                                                            },
+
+                                                            buttonValue: function(status) {
+                                                              //For below status allow cancel
+                                                              if(['PENDING_APPROVAL','SCHEDULED'].indexOf(status) > -1) {
+                                                                return 'Cancel'
+                                                              } else {
+                                                                return status
                                                               }
                                                             }
                                                           }
@@ -153,7 +135,6 @@ app.use('/cancel', (req, res) => {
   cancelObj._cancelSchedule(req.query.job_id)
            .then((result) => {
             //Success scenario/response
-            console.log(result['updatedRows'])
             res.json({ 'updatedRows': result['updatedRows']})
 
            })
