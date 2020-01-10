@@ -47,7 +47,7 @@ class confirm {
                     db._fetchMultipleRows(sql, [req.query.job_id])
                       .then((result) => {
                         //Proceed further to schedule activation with details from database
-                        this._approveJob(result);
+                        this._approveJob(result, db);
                       })
                       .catch((result) => {
                         this.response['responseText'] = 'Reason: Unable to get details of configuration'
@@ -77,7 +77,7 @@ class confirm {
   * @param : request object
   * @return : responseText
   */
-  _approveJob(result) {
+  _approveJob(result, db) {
     return new Promise((resolve, reject) => {
           //Validate Property one last time with API calls and schedule it
           config_name = result[0].config_name
@@ -94,6 +94,7 @@ class confirm {
           scheduleId = result[0].job_id
           rb.on('job', job => {
               let activationResult = activation_object._activateProperty_dbcheck(
+                                      db,
                                       searchObj,
                                       versionId,
                                       env,
