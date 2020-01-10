@@ -94,7 +94,27 @@ app.use('/searchandcancel',(req, res) => {
                 res.render('main/searchFailure' , { responseText } );
               } else {
                 //We got some results to display
-                res.render('main/searchresult', {dataRows,
+                //Sort the dataRows in the order of PENDING_APPROVAL, SCHEDULED and others
+                var dataRowsSorted = [];
+                var dataRowsLength = dataRows.length;
+\                if (dataRowsLength != 0) {
+                    for (var i = 0; i < dataRowsLength; i++) {
+                    if (dataRows[i].status == "PENDING_APPROVAL") {
+                      dataRowsSorted.push(dataRows[i]);
+                      };
+                    }
+                    for (var i = 0; i < dataRowsLength; i++) {
+                    if (dataRows[i].status == "SCHEDULED") {
+                      dataRowsSorted.push(dataRows[i]);
+                      };
+                    }
+                    for (var i = 0; i < dataRowsLength; i++) {
+                    if (dataRows[i].status != "PENDING_APPROVAL"  && dataRows[i].status != "SCHEDULED") {
+                      dataRowsSorted.push(dataRows[i]);
+                      };
+                    }
+                }
+                res.render('main/searchresult', {dataRowsSorted,
                                                 // Override `foo` helper only for this rendering.
                                                 helpers: {
                                                             buttonClass: function (status, value='') {
@@ -103,11 +123,16 @@ app.use('/searchandcancel',(req, res) => {
                                                                   return 'CANCELLED'
                                                                 }
                                                                 return 'disabled';
+                                                              }
+                                                              if(status === 'SCHEDULED' | status === 'PENDING_APPROVAL'){
+                                                                if(value == 'value') {
+                                                                  return 'CANCEL'
+                                                                }
                                                               } else {
                                                                 if(value == 'value') {
                                                                   return 'CANCEL'
                                                                 }
-                                                                return '';
+                                                                return 'disabled';
                                                               }
                                                             }
                                                           }
@@ -130,6 +155,7 @@ app.use('/cancel', (req, res) => {
             //Success scenario/response
             console.log(result['updatedRows'])
             res.json({ 'updatedRows': result['updatedRows']})
+
            })
            .catch((result) => {
             //Failure scenario/response
