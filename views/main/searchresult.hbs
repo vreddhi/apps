@@ -42,7 +42,7 @@
 				      </tr>
 				    </thead>
 				    <tbody>
-				    	{{#each dataRowsSorted}}
+				    	{{#each dataRows}}
 				    	<form class="form-inline" action ="/cancel" method="GET">
 				      <tr>
 				        <td>{{config_name}}</td>
@@ -51,7 +51,7 @@
 				        <td>{{date}}</td>
 				        <td>{{job_id}}</td>
 				        <td id="status_{{job_id}}">{{status}}</td>
-						    <td><button type="button" class="btn btn-danger btn-lg" id="{{job_id}}" data-complete-text="<i class='fa fa-circle-o-notch fa-spin'></i> CANCELLED" data-cancelling-text="<i class='fa fa-circle-o-notch fa-spin'></i> Cancelling Job" {{buttonClass status}}>{{buttonValue status}}</button></td>
+						    <td><button type="button" class="{{buttonClass status}}" id="{{job_id}}" data-complete-text="<i class='fa fa-circle-o-notch fa-spin'></i> CANCELLED" data-cancelling-text="<i class='fa fa-circle-o-notch fa-spin'></i> Cancelling Job" {{buttonState status}}>{{buttonValue status}}</button></td>
 								</td>
 				        <input type = "hidden" name = "job_id" value = "{{job_id}} " />
 				      </tr>

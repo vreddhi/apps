@@ -135,6 +135,7 @@ class validation {
                                               accountSwitchKey)
                         .then((data) => {
                           //_checkVersionValidity passed
+                          console.log(data)
                           resolve(validation_result)
                         })
                         .catch((data) => {

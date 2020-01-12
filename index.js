@@ -14,12 +14,15 @@ var database = require('./database.js')
 
 var hbs = exphbs.create({
     helpers: {
-        buttonClass: function (status) {
+        buttonState: function (status) {
             return '';
         },
         buttonValue: function (status) {
            return '';
-        }
+        },
+        buttonClass: function (status) {
+            return '';
+        },
     },
     defaultLayout: 'default',
     layoutsDir:"views/layouts/",
@@ -67,6 +70,7 @@ app.use('/confirm', (req,res) => {
   var confirmObj = new confirm();
   confirmObj._setConfirmation(req)
             .then((result) => {
+              console.log('Confirmed')
               responseText = result['responseText']
               res.render('main/confirmresult', { responseText });
             })
@@ -100,7 +104,7 @@ app.use('/searchandcancel',(req, res) => {
                 res.render('main/searchresult', {dataRows,
                                                 // Override `foo` helper only for this rendering.
                                                 helpers: {
-                                                            buttonClass: function (status) {
+                                                            buttonState: function (status) {
                                                               //If one of below values, disable the button by returning bootstrap class
                                                               if(['CANCELLED','FAILED','COMPLETED'].indexOf(status) > -1) {
                                                                 return 'disabled'
@@ -108,7 +112,6 @@ app.use('/searchandcancel',(req, res) => {
                                                                 return ''
                                                               }
                                                             },
-
                                                             buttonValue: function(status) {
                                                               //For below status allow cancel
                                                               if(['PENDING_APPROVAL','SCHEDULED'].indexOf(status) > -1) {
@@ -116,6 +119,18 @@ app.use('/searchandcancel',(req, res) => {
                                                               } else {
                                                                 return status
                                                               }
+                                                            },
+                                                            buttonClass: function(status) {
+                                                              //return bootstrap button class
+                                                              var btn_class = 'btn btn-info btn-lg'
+                                                              if(['COMPLETED'].indexOf(status) > -1) {
+                                                                btn_class = 'btn btn-success btn-lg'
+                                                              } else if(['FAILED'].indexOf(status) > -1) {
+                                                                btn_class = 'btn btn-dark btn-lg'
+                                                              } else if(['CANCELLED'].indexOf(status) > -1) {
+                                                                btn_class = 'btn btn-danger btn-lg'
+                                                              }
+                                                              return btn_class
                                                             }
                                                           }
                                                 });
