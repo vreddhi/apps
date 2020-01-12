@@ -155,23 +155,10 @@ app.use('/cancel', (req, res) => {
            })
            .catch((result) => {
             //Failure scenario/response
-            res.json({ 'updatedRows': null})
+            res.json({ 'updatedRows': -1})
            })
 })
 
-
-
-//Cancel schedule
-/*
-var cancelScheduleIssueRedirect = function (req, res, next) {
-  schedule_id = req.query.schedule_id ;
-  console.log("schedule cancelScheduleIssueRedirect = "+ schedule_id)
-
-  next()
-}
-app.use(cancelScheduleIssueRedirect)
-require('./cancelschedule_issueredirect')(app);
-*/
 
 
 //start server

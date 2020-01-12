@@ -80,11 +80,23 @@ $('.btn').on('click', function() {
 	 xhr.onload = function (e) {
 	   if (xhr.readyState === 4) {
 	     if (xhr.status === 200) {
-	       console.log(xhr.responseText);
+				 var data=JSON.parse(xhr.responseText);
 				 setTimeout(function() {
-				 	 $this.button('complete');
-					 document.getElementById("status_" + job_id).innerHTML = "CANCELLED";
-					 document.getElementById(job_id).disabled=true;
+					 console.log(data['updatedRows'])
+					 if(data['updatedRows'] == 1) {
+						 $this.button('complete');
+						 document.getElementById("status_" + job_id).innerHTML = "CANCELLED";
+						 document.getElementById(job_id).disabled=true;
+						 document.getElementById(job_id).classList.remove('btn-info');
+						 document.getElementById(job_id).classList.add('btn-danger');
+					 } else {
+						 document.getElementById("status_" + job_id).innerHTML = "CANCEL FAILED";
+						 document.getElementById(job_id).disabled=true;
+						 setTimeout(function() {
+							 document.getElementById(job_id).disabled=false;
+						 },2000)
+					 }
+
 				 }, 3000);
 	     } else {
 	       console.error(xhr.statusText);

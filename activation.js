@@ -164,13 +164,13 @@ class activation {
                                           .then((result) => {
                                             //If activation is success, update the DB as completed
                                             var sql = `UPDATE ALL_ACTIVATIONS
-                                                        SET status = 'COMPLETED'
+                                                        SET status = 'IN_PROGRESS'
                                                         WHERE job_id = ?`;
                                             db._updateTable(sql, [job_id])
                                               .then((result) => {
                                                 //Success activating and DB update
-                                                console.log('Successfully activated')
-                                                resolve('Success')
+                                                console.log('Successfully activing')
+                                                resolve('Successfully activing')
                                               })
                                               .catch((result) => {
                                                 //Success activating and Failure to DB update
