@@ -73,7 +73,7 @@ class confirm {
 
               } else {
                 console.log('More than 1 valid entry Found. Not Proceeding..')
-                this.response['response'] = 'Activation is already scheduled.';
+                this.response['responseText'] = 'Activation is already scheduled.';
                 reject(this.response)
               }
             })
@@ -130,7 +130,7 @@ class confirm {
                                                               accountSwitchKey,
                                                               job_id)
                                                         .then((data) => {console.log('Successfully Activated')})
-                                                        .catch((data) => {console.log('Activation Failed')})      
+                                                        .catch((data) => {console.log('Activation Failed')})
                                    })
 
 
@@ -139,8 +139,9 @@ class confirm {
                   console.log(err)
                 }
             });
-
-            rb.add({ time: Date.now() + 1000, message: 'Scheduled Activation' });
+            var actvn_date_time_epoch = new Date(actvn_date_time);
+            actvn_date_time_epoch = actvn_date_time_epoch.getTime();
+            rb.add({ time: actvn_date_time_epoch , message: 'Scheduled Activation' });
             resolve('Success');
           }
           catch(err) {
