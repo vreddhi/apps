@@ -38,7 +38,6 @@ app.set('port', process.env.PORT || 3000);
 
 
 //Implement login here
-/*
 app.all('*', function(req, res, next){
     if(req.get('Auth')) {
       next()
@@ -47,7 +46,7 @@ app.all('*', function(req, res, next){
     }
     //res.render('main/index');
 });
-*/
+
 
 //GET main page
 app.get('/', function(req, res){
