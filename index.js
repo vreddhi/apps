@@ -84,6 +84,29 @@ app.use('/confirm', (req,res) => {
   confirmObj._setConfirmation(req)
             .then((result) => {
               console.log('Confirmed')
+              searchObj = new search()
+              searchObj._findScheduleByJobId(req.query.job_id)
+              .then((result) => {
+                var dataRows = result['queryResult']
+                var schedulerObj = {reviewer_email:dataRows[0].reviewer,
+                                    submitter_email:dataRows[0].submitter,
+                                    config_name:dataRows[0].config_name,
+                                    config_version:dataRows[0].version,
+                                    actvn_date_time:dataRows[0].date,
+                                    actvn_network:dataRows[0].network,
+                                    sdpr_link:dataRows[0].sdpr,
+                                    customer_email:dataRows[0].customer,
+                                    notification_email:dataRows[0].notification,
+                                    account_switch_key:dataRows[0].switchkey,
+                                    email_context:"confirm_notification"
+                                    };
+                console.log(schedulerObj)
+                sendEmails = new mail()._triggerEmails(schedulerObj, job_id=req.query.job_id)
+                                       .catch((emailResult) => {
+                                         result['responseText'] = result['responseText'] +
+                                                                  '.\nUnable to send emails'
+                                       })
+              })
               responseText = result['responseText']
               res.render('main/confirmresult', { responseText });
             })
@@ -119,7 +142,7 @@ app.use('/searchandcancel',(req, res) => {
                                                 helpers: {
                                                             buttonState: function (status) {
                                                               //If one of below values, disable the button by returning bootstrap class
-                                                              if(['CANCELLED','FAILED','COMPLETED'].indexOf(status) > -1) {
+                                                              if(['CANCELLED','FAILED','COMPLETED', 'IN_PROGRESS'].indexOf(status) > -1) {
                                                                 return 'disabled'
                                                               } else {
                                                                 return ''
@@ -163,6 +186,29 @@ app.use('/cancel', (req, res) => {
   cancelObj._cancelSchedule(req.query.job_id)
            .then((result) => {
             //Success scenario/response
+            searchObj = new search()
+            searchObj._findScheduleByJobId(req.query.job_id)
+            .then((result) => {
+              var dataRows = result['queryResult']
+              var schedulerObj = {reviewer_email:dataRows[0].reviewer,
+                                  submitter_email:dataRows[0].submitter,
+                                  config_name:dataRows[0].config_name,
+                                  config_version:dataRows[0].version,
+                                  actvn_date_time:dataRows[0].date,
+                                  actvn_network:dataRows[0].network,
+                                  sdpr_link:dataRows[0].sdpr,
+                                  customer_email:dataRows[0].customer,
+                                  notification_email:dataRows[0].notification,
+                                  account_switch_key:dataRows[0].switchkey,
+                                  email_context:"cancel_notification"
+                                  };
+              console.log(schedulerObj)
+              sendEmails = new mail()._triggerEmails(schedulerObj, job_id=req.query.job_id)
+                                     .catch((emailResult) => {
+                                       result['responseText'] = result['responseText'] +
+                                                                '.\nUnable to send emails'
+                                     })
+            })
             res.json({ 'updatedRows': result['updatedRows']})
 
            })
