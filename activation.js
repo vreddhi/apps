@@ -54,7 +54,7 @@ class activation {
          this._connection.send(function (data, response) {
            if (response && response.statusCode >= 200 && response.statusCode < 400) {
              let parsed = JSON.parse(response.body);
-             if(body.versions.items.length > 0) {
+             if(parsed.versions.items.length > 0) {
                resolve(parsed);
              } else {
                reject(parsed)
@@ -219,10 +219,14 @@ class activation {
                                       accountSwitchKey)
                         .then((data) => {
                           //This is needed as it is a recursive call
+                          console.log('Resolving from recursive call')
+                          console.log(data)
                           resolve(data)
                         })
                         .catch((data) => {
                           //This is needed as it is a recursive call
+                          console.log('Rejecting from recursive call')
+                          console.log(data)
                           reject(data)
                         })
                 } else {
@@ -230,13 +234,19 @@ class activation {
                       let matches = !parsed.activationLink ? null : parsed.activationLink.match('activations/([a-z0-9_]+)\\b');
 
                       if (!matches) {
+                          console.log('Rejecting from matches')
+                          console.log(parsed)
                           reject(parsed);
                       } else {
                           //console.log(matches[1])
+                          console.log('Resolving from recursive call')
+                          console.log(matches[1])
                           resolve(matches[1])
                       }
                 }
             } else {
+                console.log('Rejecting from activation call')
+                console.log(response.body)
                 reject(response.body);
             }
          })
@@ -269,7 +279,7 @@ class activation {
                 if (result.total == 1) {
                     this._getProperty(queryObj, accountSwitchKey)
                           .then((body) => {
-                            console.log(body.versions.items[0])
+                            //console.log(body.versions.items[0])
                             let contractId = body.versions.items[0].contractId
                             let groupId = body.versions.items[0].groupId
                             let propertyId = body.versions.items[0].propertyId
@@ -290,7 +300,7 @@ class activation {
                                       db._updateTable(sql, [job_id])
 
                                       //Asynchronously poll activation
-                                      actObj._pollActivation(contractId, groupId, propertyId, activationID, accountSwitchKey)
+                                      this._pollActivation(contractId, groupId, propertyId, activationID, accountSwitchKey)
                                             .then((result) => {
                                               console.log('Polling Activation Successfully Finished')
                                               console.log(result)
