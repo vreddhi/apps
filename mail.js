@@ -29,13 +29,14 @@ class mail {
       });
   }
 
-  /*
+  /**
   * Below function is used to construct Email body
-  * @param : from
-  * @param : to
-  * @param : subject
-  * @param : body
-  */
+  * for submitter and reviewer
+  * @param from
+  * @param to
+  * @param subject
+  * @param body
+  **/
   _triggerEmails(schedulerObj, job_id='') {
     var emailBody = null
     return new Promise((resolve, reject) => {
@@ -63,13 +64,13 @@ class mail {
     })
   }
 
-  /*
+  /**
   * Below function is used to construct Email body
   * @param : from
   * @param : to
   * @param : subject
   * @param : body
-  */
+  **/
   _getContent(toWhom, schedulerObj, job_id) {
     return new Promise((resolve,reject) => {
       var contents = ''
@@ -111,6 +112,23 @@ class mail {
     })
   }
 
+  /**
+  * Below function is used to construct Email body
+  * @param : from
+  * @param : to
+  * @param : subject
+  * @param : body
+  **/
+  _getUserApprovalContent(user_name, app_location) {
+    return new Promise((resolve,reject) => {
+      var contents = ''
+      fs.readFile('./static/userApprovalContent.html', 'utf8', function(err, contents) {
+          contents = contents.replace('{{User Name}}',user_name)
+          contents = contents.replace('{{Approval}}',app_location)
+          resolve(contents)
+      })
+    })
+  }
 
 }
 

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+</head>
+
+<style>
+.customrow {
+	margin-top: 20%;
+	margin-left: 20%;
+}
+
+label {
+	color: #FFFFFF;
+}
+
+body{
+	background: -webkit-linear-gradient(left, #151414, #106C87);
+}
+
+.register-left p{
+		color: rgb(255, 255, 255);
+    margin-left: 15%;
+}
+.register-left h3{
+		color: rgb(255, 255, 255);
+		margin-left: 25%;
+}
+.register-left img{
+    margin-top: 15%;
+		margin-left: 25%;
+    #margin-bottom: 5%;
+    width: 8%;
+    -webkit-animation: mover 2s infinite  alternate;
+    animation: mover 1s infinite  alternate;
+}
+@-webkit-keyframes mover {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(-20px); }
+}
+@keyframes mover {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(-20px); }
+}
+
+</style>
+
+<body>
+	<div class="col-sm-4">
+	</div>
+	<div class="col-sm-6 register-left">
+			<img src="https://image.ibb.co/n7oTvU/logo_white.png" alt=""/>
+			<h3>APPS</h3>
+			<p>Automated Property Push Scheduler</p>
+	</div>
+	<div class="container-fluid">
+		<div class="row customrow">
+			<div class="col-md-6">
+				<div class="col-md-6">
+				<form action='/register' method="POST">
+				  <div class="form-group">
+				    <label for="exampleInputEmail1">Email address</label>
+				    <input type="email" class="form-control" name="email" id="exampleInputEmail1" aria-describedby="emailHelp">
+				    <small id="emailHelp" class="form-text text-muted">New User.</small>
+				  </div>
+				  <div class="form-group">
+				    <label for="exampleInputPassword1">Password</label>
+				    <input type="password" class="form-control" name="passowrd" id="exampleInputPassword1">
+				  </div>
+				  <button type="submit" class="btn btn-primary">Signup</button>
+				</form>
+			</div>
+			</div>
+			<div class="col-md-6">
+				<div class="col-md-6">
+				<form action='/login' method="POST">
+				  <div class="form-group">
+				    <label for="exampleInputEmail1">Email address</label>
+				    <input type="email" class="form-control" name="email" id="exampleInputEmail1" aria-describedby="emailHelp">
+				    <small id="emailHelp" class="form-text text-muted">Registed User.</small>
+				  </div>
+				  <div class="form-group">
+				    <label for="exampleInputPassword1">Password</label>
+				    <input type="password" class="form-control" name="passowrd" id="exampleInputPassword1">
+				  </div>
+				  <div class="form-group form-check">
+				    <input type="checkbox" name="remember_me" class="form-check-input" id="exampleCheck1">
+				    <label class="form-check-label" for="exampleCheck1">Keep Me Logged in</label>
+				  </div>
+				  <button type="submit" class="btn btn-primary">Login</button>
+				</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+
+<script>
+	Swal.fire('{{reason}}')
+</script>
+</html>

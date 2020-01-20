@@ -1,154 +1,107 @@
 <!DOCTYPE html>
 <html>
 <head>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.15.1/moment.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.7.14/js/bootstrap-datetimepicker.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.15.1/moment.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.7.14/js/bootstrap-datetimepicker.min.js"></script>
-
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.7.14/css/bootstrap-datetimepicker.min.css">
-
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.7.14/css/bootstrap-datetimepicker.min.css">
 </head>
-<body>
-	 <nav class="navbar navbar-inverse">
-		  <div class="container-fluid">
-		    <div class="navbar-header">
-		      <a class="navbar-brand"  href="/">APPS</a>
-		    </div>
-		    <ul class="nav navbar-nav">
-		      <li class="active"  ><a href="/">Schedule New Activation</a></li>
-		      <li ><a href="/search">Search/Cancel Scheduled Activations</a></li>
-		    </ul>
-		  </div>
-		</nav>
 
-		<div class="es-wrapper-color" style="background-color:#EEEEEE;">
-	   <table class="es-wrapper" width="100%" cellspacing="0" cellpadding="0" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;padding:0;Margin:0;width:100%;height:100%;background-repeat:repeat;background-position:center top;">
-	     <tr style="border-collapse:collapse;">
-	      <td valign="top" style="padding:0;Margin:0;">
-	       <table class="es-content" cellspacing="0" cellpadding="0" align="center" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;table-layout:fixed !important;width:100%;">
-	         <tr style="border-collapse:collapse;"></tr>
-	         <tr style="border-collapse:collapse;">
-	          <td align="center" style="padding:0;Margin:0;">
-	           <table class="es-header-body" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;background-color:#044767;" width="600" cellspacing="0" cellpadding="0" bgcolor="#044767" align="center">
-	             <tr style="border-collapse:collapse;">
-	              <td align="left" style="Margin:0;padding-top:35px;padding-bottom:35px;padding-left:35px;padding-right:35px;">
-	               <!--[if mso]><table width="530" cellpadding="0" cellspacing="0"><tr><td width="340" valign="top"><![endif]-->
-	               <table class="es-left" cellspacing="0" cellpadding="0" align="left" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;float:left;">
-	                 <tr style="border-collapse:collapse;">
-	                  <td class="es-m-p0r es-m-p20b" width="340" valign="top" align="center" style="padding:0;Margin:0;">
-	                   <table width="100%" cellspacing="0" cellpadding="0" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;">
-	                     <tr style="border-collapse:collapse;">
-	                      <td class="es-m-txt-c" align="left" style="padding:0;Margin:0;"><h1 style="Margin:0;line-height:36px;mso-line-height-rule:exactly;font-family:'open sans', 'helvetica neue', helvetica, arial, sans-serif;font-size:36px;font-style:normal;font-weight:bold;color:#FFFFFF;">APPS</h1></td>
-	                     </tr>
-	                   </table></td>
-	                 </tr>
-	               </table>
-	               <!--[if mso]></td><td width="20"></td><td width="170" valign="top"><![endif]-->
-	               <table cellspacing="0" cellpadding="0" align="right" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;">
-	                 <tr class="es-hidden" style="border-collapse:collapse;">
-	                  <td class="es-m-p20b" width="170" align="left" style="padding:0;Margin:0;">
-	                   <table width="100%" cellspacing="0" cellpadding="0" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;">
-	                     <tr style="border-collapse:collapse;">
-	                      <td align="center" style="padding:0;Margin:0;padding-bottom:5px;">
-	                       <table width="100%" height="100%" cellspacing="0" cellpadding="0" border="0" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;">
-	                         <tr style="border-collapse:collapse;">
-	                          <td style="padding:0;Margin:0px;border-bottom:1px solid #044767;background:rgba(0, 0, 0, 0) none repeat scroll 0% 0%;height:1px;width:100%;margin:0px;"></td>
-	                         </tr>
-	                       </table></td>
-	                     </tr>
-	                     <tr style="border-collapse:collapse;">
-	                      <td style="padding:0;Margin:0;">
-	                       <table cellspacing="0" cellpadding="0" align="right" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;">
-	                         <tr style="border-collapse:collapse;">
-	                          <td align="center" style="padding:0;Margin:0;display:none;"></td>
-	                         </tr>
-	                       </table></td>
-	                     </tr>
-	                   </table></td>
-	                 </tr>
-	               </table>
-	               <!--[if mso]></td></tr></table><![endif]--></td>
-	             </tr>
-	           </table></td>
-	         </tr>
-	       </table>
-	       <table class="es-content" cellspacing="0" cellpadding="0" align="center" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;table-layout:fixed !important;width:100%;">
-	         <tr style="border-collapse:collapse;">
-	          <td align="center" style="padding:0;Margin:0;">
-	           <table class="es-content-body" width="600" cellspacing="0" cellpadding="0" bgcolor="#ffffff" align="center" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;background-color:#FFFFFF;">
-	             <tr style="border-collapse:collapse;">
-	              <td style="Margin:0;padding-bottom:35px;padding-left:35px;padding-right:35px;padding-top:40px;background-color:#F7F7F7;" bgcolor="#f7f7f7" align="left">
-	               <table width="100%" cellspacing="0" cellpadding="0" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;">
-	                 <tr style="border-collapse:collapse;">
-	                  <td width="530" valign="top" align="center" style="padding:0;Margin:0;">
-	                   <table width="100%" cellspacing="0" cellpadding="0" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;">
-	                     <tr style="border-collapse:collapse;">
-	                      <td align="center" style="padding:0;Margin:0;padding-bottom:15px;"><h2 style="Margin:0;line-height:36px;mso-line-height-rule:exactly;font-family:'open sans', 'helvetica neue', helvetica, arial, sans-serif;font-size:30px;font-style:normal;font-weight:bold;color:#333333;">{{responseText}}</h2></td>
-	                     </tr>
-	                     <tr style="border-collapse:collapse;">
-	                      <td class="es-m-txt-l" align="left" style="padding:0;Margin:0;padding-top:20px;"><h3 style="Margin:0;line-height:22px;mso-line-height-rule:exactly;font-family:'open sans', 'helvetica neue', helvetica, arial, sans-serif;font-size:18px;font-style:normal;font-weight:bold;color:#333333;"><strong>Hello,</strong></h3></td>
-	                     </tr>
-	                     <tr style="border-collapse:collapse;">
-	                      <td align="left" style="padding:0;Margin:0;padding-bottom:10px;padding-top:15px;"><p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-size:16px;font-family:'open sans', 'helvetica neue', helvetica, arial, sans-serif;line-height:24px;color:#777777;">You read it right! We <strong>have scheduled activation </strong>request. There will be no further approvals needed.</p></td>
-	                     </tr>
-	                     <tr style="border-collapse:collapse;">
-	                      <td align="center" style="Margin:0;padding-left:10px;padding-right:10px;padding-bottom:20px;padding-top:25px;"><span class="es-button-border" style="border-style:solid;border-color:transparent;background:#ED8E20 none repeat scroll 0% 0%;border-width:0px;display:inline-block;border-radius:5px;width:auto;"><a href="/search" class="es-button" target="_blank" style="mso-style-priority:100 !important;text-decoration:none;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:'open sans', 'helvetica neue', helvetica, arial, sans-serif;font-size:18px;color:#FFFFFF;border-style:solid;border-color:#ED8E20;border-width:15px 30px;display:inline-block;background:#ED8E20 none repeat scroll 0% 0%;border-radius:5px;font-weight:normal;font-style:normal;line-height:22px;width:auto;text-align:center;">View Activation Status</a></span></td>
-	                     </tr>
-	                   </table></td>
-	                 </tr>
-	               </table></td>
-	             </tr>
-	           </table></td>
-	         </tr>
-	       </table>
-	       <table class="es-footer" cellspacing="0" cellpadding="0" align="center" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;table-layout:fixed !important;width:100%;background-color:transparent;background-repeat:repeat;background-position:center top;">
-	         <tr style="border-collapse:collapse;">
-	          <td align="center" style="padding:0;Margin:0;">
-	           <table class="es-footer-body" width="600" cellspacing="0" cellpadding="0" align="center" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;background-color:#FFFFFF;">
-	             <tr style="border-collapse:collapse;">
-	              <td align="left" style="Margin:0;padding-top:35px;padding-left:35px;padding-right:35px;padding-bottom:40px;">
-	               <table width="100%" cellspacing="0" cellpadding="0" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;">
-	                 <tr style="border-collapse:collapse;">
-	                  <td width="530" valign="top" align="center" style="padding:0;Margin:0;">
-	                   <table width="100%" cellspacing="0" cellpadding="0" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;">
-	                     <tr style="border-collapse:collapse;">
-	                      <td align="center" style="padding:0;Margin:0;padding-bottom:35px;"><p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-size:14px;font-family:'open sans', 'helvetica neue', helvetica, arial, sans-serif;line-height:21px;color:#333333;"><strong>Service Delivery Americas</strong></p><p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-size:14px;font-family:'open sans', 'helvetica neue', helvetica, arial, sans-serif;line-height:21px;color:#333333;"><strong>GSS, Akamai Technologies</strong></p></td>
-	                     </tr>
-	                     <tr style="border-collapse:collapse;">
-	                      <td class="es-m-txt-c" esdev-links-color="#777777" align="left" style="padding:0;Margin:0;padding-bottom:5px;"><p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-size:14px;font-family:'open sans', 'helvetica neue', helvetica, arial, sans-serif;line-height:21px;color:#777777;">If you didn't create this Activation request. Please reach out to&nbsp;<u><a target="_blank" style="-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:'open sans', 'helvetica neue', helvetica, arial, sans-serif;font-size:14px;text-decoration:none;color:#777777;" href="mailto:vbhat@akamai.com">help</a></u>.</p></td>
-	                     </tr>
-	                   </table></td>
-	                 </tr>
-	               </table></td>
-	             </tr>
-	           </table></td>
-	         </tr>
-	       </table>
-	       <table class="es-content" cellspacing="0" cellpadding="0" align="center" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;table-layout:fixed !important;width:100%;">
-	         <tr style="border-collapse:collapse;">
-	          <td align="center" style="padding:0;Margin:0;">
-	           <table class="es-content-body" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;background-color:transparent;" width="600" cellspacing="0" cellpadding="0" align="center">
-	             <tr style="border-collapse:collapse;">
-	              <td align="left" style="Margin:0;padding-left:20px;padding-right:20px;padding-top:30px;padding-bottom:30px;">
-	               <table width="100%" cellspacing="0" cellpadding="0" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;">
-	                 <tr style="border-collapse:collapse;">
-	                  <td width="560" valign="top" align="center" style="padding:0;Margin:0;">
-	                   <table width="100%" cellspacing="0" cellpadding="0" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;">
-	                     <tr style="border-collapse:collapse;">
-	                      <td class="es-infoblock" align="center" style="padding:0;Margin:0;line-height:14px;font-size:12px;color:#CCCCCC;"><a target="_blank" style="-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:'open sans', 'helvetica neue', helvetica, arial, sans-serif;font-size:12px;text-decoration:none;color:#CCCCCC;"><img src="images/64951510234941531.png" alt width="125" style="display:block;border:0;outline:none;text-decoration:none;-ms-interpolation-mode:bicubic;"></a></td>
-	                     </tr>
-	                   </table></td>
-	                 </tr>
-	               </table></td>
-	             </tr>
-	           </table></td>
-	         </tr>
-	       </table></td>
-	     </tr>
-	   </table>
-	  </div>
+<style>
+
+.register {
+    background: -webkit-linear-gradient(left, #151414, #106C87);
+		padding: 12%;
+}
+
+.register-right{
+    background: #f8f9fa;
+    border-top-left-radius: 10% 50%;
+    border-bottom-left-radius: 10% 50%;
+		padding: 15%;
+}
+
+.register-right h3{
+
+}
+
+.register-left p{
+		color: rgb(255, 255, 255);
+    margin-top: 2%;
+}
+.register-left h3{
+		color: rgb(255, 255, 255);
+		margin-left: 20%;
+}
+.register-left img{
+    margin-top: 60%;
+		margin-left: 20%;
+    margin-bottom: 5%;
+    width: 25%;
+    -webkit-animation: mover 2s infinite  alternate;
+    animation: mover 1s infinite  alternate;
+}
+@-webkit-keyframes mover {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(-20px); }
+}
+@keyframes mover {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(-20px); }
+}
+
+.newrow {
+	margin-top: 1%;
+}
+
+</style>
+
+<body>
+	<nav class="navbar navbar-default navbar-fixed-top">
+	  <div class="container-fluid">
+	    <div class="navbar-header">
+	      <a class="navbar-brand" href="/">APPS</a>
+	    </div>
+      <ul class="nav navbar-nav">
+        <li class="active"><a href="/">Schedule <span class="sr-only">(current)</span></a></li>
+        <li><a href="/search">Search</a></li>
+				<li><a href="/search">Cancel</a></li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Support <span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            <li><a href="mailto:vbhat@akamai.com" target="_blank">Contact Us</a></li>
+            <li><a href="https://collaborate.akamai.com/confluence/display/APPS/Getting+started" target="_blank">Documentation</a></li>
+            <li><a href="https://github.com/vreddhi/apps" target="_blank">Contribute</a></li>
+						<li><a href="/logout">Logout</a></li>
+            <li role="separator" class="divider"></li>
+            <li><a href="https://ac.akamai.com/community/teams/gss/global-services/sd/service-delivery-americas" target="_blank">SD Americas</a></li>
+          </ul>
+        </li>
+      </ul>
+
+	  </div><!-- /.container-fluid -->
+	</nav>
+
+<div class="container-fluid">
+<div class="register">
+	<div class="row newrow">
+		<div class="col-md-3 register-left">
+				<img src="https://image.ibb.co/n7oTvU/logo_white.png" alt=""/>
+				<h3>APPS</h3>
+				<p>Automated Property Push Scheduler</p>
+		</div>
+
+	<div class="col-md-9 register-right">
+		<h3>Successfully scheduled. Thank you for using APPS.</h3>
+	</div>
+</div>
+</div>
+</div>
 </body>
 </html>

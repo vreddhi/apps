@@ -12,17 +12,32 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.7.14/css/bootstrap-datetimepicker.min.css">
 </head>
 <body onload="myFunction()">
-		  <nav class="navbar navbar-inverse">
-		  <div class="container-fluid">
-		    <div class="navbar-header">
-		      <a class="navbar-brand"  href="/">APPS</a>
-		    </div>
-		    <ul class="nav navbar-nav">
-		      <li  ><a href="/">Schedule New Activation</a></li>
-		      <li  ><a href="/search">Search/Cancel Scheduled Activations</a></li>
-		    </ul>
-		  </div>
-		</nav>
+	<nav class="navbar navbar-default navbar-fixed-top">
+	  <div class="container-fluid">
+	    <div class="navbar-header">
+	      <a class="navbar-brand" href="/">APPS</a>
+	    </div>
+      <ul class="nav navbar-nav">
+        <li class="active"><a href="/">Schedule <span class="sr-only">(current)</span></a></li>
+        <li><a href="/search">Search</a></li>
+				<li><a href="/search">Cancel</a></li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Support <span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            <li><a href="mailto:vbhat@akamai.com" target="_blank">Contact Us</a></li>
+            <li><a href="https://collaborate.akamai.com/confluence/display/APPS/Getting+started" target="_blank">Documentation</a></li>
+            <li><a href="https://github.com/vreddhi/apps" target="_blank">Contribute</a></li>
+						<li><a href="/logout">Logout</a></li>
+            <li role="separator" class="divider"></li>
+            <li><a href="https://ac.akamai.com/community/teams/gss/global-services/sd/service-delivery-americas" target="_blank">SD Americas</a></li>
+          </ul>
+        </li>
+      </ul>
+
+	  </div><!-- /.container-fluid -->
+	</nav>
 	<div class="container">
 	  <h2><p class="text-center">Automated Prod-Push Scheduler</p></h2>
 	  <br></br>

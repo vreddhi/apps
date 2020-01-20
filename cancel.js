@@ -15,9 +15,12 @@ class cancel {
     }
   }
 
-  /*
-  * Below function is used to cancel a schedule
-  * @param : scheduleId
+  /**
+  * Function to cancel a activation schedule
+  * Update table ALL_ACTIVATIONS
+  *
+  * @param {string} job_id - propetyId of configuration
+  * @returns {Promise.<TResult>}
   */
   _cancelSchedule(job_id) {
     return new Promise((resolve, reject) => {

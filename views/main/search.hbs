@@ -1,45 +1,114 @@
 <!DOCTYPE html>
 <html>
 <head>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.15.1/moment.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.7.14/js/bootstrap-datetimepicker.min.js"></script>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.15.1/moment.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.7.14/js/bootstrap-datetimepicker.min.js"></script>
-
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.7.14/css/bootstrap-datetimepicker.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.7.14/css/bootstrap-datetimepicker.min.css">
 </head>
-<body>
-		  <nav class="navbar navbar-inverse">
-		  <div class="container-fluid">
-		    <div class="navbar-header">
-		      <a class="navbar-brand"  href="/">APPS</a>
-		    </div>
-		    <ul class="nav navbar-nav">
-		      <li  ><a href="/">Schedule New Activation</a></li>
-		      <li class="active" ><a href="/search">Search/Cancel Scheduled Activations</a></li>
-		    </ul>
-		  </div>
-		</nav>
-	<div class="container">
-	  <h2><p class="text-center">Automated Prod-Push Scheduler</p></h2>
-	  <br></br>
-	  <div id="warning_msg">
-	  </div>
-	  <h4><p class="text-left">Search Scheduled Activations:</p></h4>
-	  <br></br>
-	  <form class="form-inline" action ="/searchandcancel" method="POST">
-	  	<div class="row">
 
-			      <div class="form-horizontal">
-			      	<label class="control-label col-sm-2" for="config_name">Configuration Name:</label>
-			      	<div class="col-sm-10">
-			        	<input type='text' class="form-control" name  ="config_name" id="config_name"  placeholder="" required/>
-								<button type="submit" class="btn btn-primary" id="singlebutton">Search</button>
-			    	</div>
-			      </div>
-  	  </form>
+<style>
+
+.register {
+    background: -webkit-linear-gradient(left, #151414, #106C87);
+    padding: 7%;
+}
+.register-right{
+    background: #f8f9fa;
+    border-top-left-radius: 10% 50%;
+    border-bottom-left-radius: 10% 50%;
+    #margin-right: 1%;
+}
+.register-left p{
+		color: rgb(255, 255, 255);
+    margin-top: 2%;
+    margin-left: 15%;
+}
+.register-left h3{
+		color: rgb(255, 255, 255);
+		margin-left: 35%;
+}
+.register-left img{
+    margin-top: 40%;
+		margin-left: 30%;
+    margin-bottom: 5%;
+    width: 25%;
+    -webkit-animation: mover 2s infinite  alternate;
+    animation: mover 1s infinite  alternate;
+}
+@-webkit-keyframes mover {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(-20px); }
+}
+@keyframes mover {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(-20px); }
+}
+
+.newrow {
+	margin-top: 10%;
+}
+.register-form{
+    padding: 20%;
+}
+</style>
+
+<body>
+	<nav class="navbar navbar-default navbar-fixed-top">
+	  <div class="container-fluid">
+	    <div class="navbar-header">
+	      <a class="navbar-brand" href="/">APPS</a>
+	    </div>
+      <ul class="nav navbar-nav">
+        <li class="active"><a href="/">Schedule <span class="sr-only">(current)</span></a></li>
+        <li><a href="/search">Search</a></li>
+				<li><a href="/search">Cancel</a></li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Support <span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            <li><a href="mailto:vbhat@akamai.com" target="_blank">Contact Us</a></li>
+            <li><a href="https://collaborate.akamai.com/confluence/display/APPS/Getting+started" target="_blank">Documentation</a></li>
+            <li><a href="https://github.com/vreddhi/apps" target="_blank">Contribute</a></li>
+						<li><a href="/logout">Logout</a></li>
+            <li role="separator" class="divider"></li>
+            <li><a href="https://ac.akamai.com/community/teams/gss/global-services/sd/service-delivery-americas" target="_blank">SD Americas</a></li>
+          </ul>
+        </li>
+      </ul>
+
+	  </div><!-- /.container-fluid -->
+	</nav>
+
+<div class="container-fluid">
+<div class="register">
+	<div class="row newrow">
+		<div class="col-md-3 register-left">
+				<img src="https://image.ibb.co/n7oTvU/logo_white.png" alt=""/>
+				<h3>APPS</h3>
+				<p>Automated Property Push Scheduler</p>
+		</div>
+	<div class="col-md-9 register-right">
+				<form action="/searchandcancel" method="POST">
+					<div class="row register-form">
+							<div class="col-md-9">
+									<div class="form-group">
+											<input type="text" class="form-control" name="config_name" placeholder="Configuration Name:" value="" />
+									</div>
+							</div>
+              <div class="col-md-3">
+                  <input type="submit" class="btn btn-info"  value="Search"/>
+							</div>
+					</div>
+			</form>
 	</div>
+</div>
+</div>
+</div>
+
 </body>
 </html>

@@ -18,10 +18,14 @@ class confirm {
     }
   }
 
-  /*
-  * Below function is used to check DB tables and confirm the scheduling
-  * @param : request object
-  * @return : responseText
+  /**
+  * Function to cancel a activation schedule
+  * Find the entry pending for approval
+  * If only 1 entry is found, then this is valid, else reject outright
+  * If valid, update DB to scheduled, and call approveJob via Rubidium to validate and schedule
+  * Rubidium is a scheduler, technically its a callback at a pre-defined time.
+  * @param {req} req - Request Object
+  * @returns {Promise.<TResult>}
   */
   _setConfirmation(req) {
     return new Promise((resolve, reject) => {
@@ -85,10 +89,12 @@ class confirm {
     })
   }
 
-  /*
-  * Below function is used to check DB tables and confirm the scheduling
-  * @param : request object
-  * @return : responseText
+  /**
+  * Function to approve the scheduled Job and activate it if all goes well
+  * If the activation fails, the DB entry is marked as FAILED
+  * @param {result} req - Result of Database query
+  * @param {db} db - Database Handler object
+  * @returns {Promise.<TResult>}
   */
   _approveJob(result, db) {
     return new Promise((resolve, reject) => {
@@ -141,7 +147,8 @@ class confirm {
             });
             var actvn_date_time_epoch = new Date(actvn_date_time);
             actvn_date_time_epoch = actvn_date_time_epoch.getTime();
-            rb.add({ time: actvn_date_time_epoch , message: 'Scheduled Activation' });
+            //rb.add({ time: actvn_date_time_epoch , message: 'Scheduled Activation' });
+            rb.add({ time: Date.now() + 1000, message: 'Scheduled Activation' });
             resolve('Success');
           }
           catch(err) {

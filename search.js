@@ -15,10 +15,10 @@ class search {
     }
   }
 
-  /*
+  /**
   * Below function is used to find scheduled data for a configuration
   * @param : config_name
-  */
+  **/
   _findSchedule(config_name) {
     return new Promise((resolve, reject) => {
       var db = new database();

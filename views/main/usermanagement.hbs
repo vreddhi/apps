@@ -46,19 +46,16 @@
 
 	  </div><!-- /.container-fluid -->
 	</nav>
-	
 	<div class="register">
 	<div class="container">
 		<div class="row">
 			  <table class="display table-hover compact" id="example">
 		    <thead>
 		      <tr>
-		        <th>Configuration Name</th>
-		        <th>Version</th>
-		        <th>Network</th>
-		        <th>Schedule date & time (GMT)</th>
-		        <th>Schedule ID</th>
-		        <th color="red">Status </th>
+		        <th>User Name</th>
+		        <th>Password</th>
+		        <th>Role</th>
+		        <th>Status </th>
 		        <th>Action</th>
 		      </tr>
 		    </thead>
@@ -66,18 +63,17 @@
 		    	{{#each dataRows}}
 		    	<form class="form-inline" action ="/cancel" method="GET">
 		      <tr>
-		        <td>{{config_name}}</td>
-		        <td>{{version}}</td>
-		        <td>{{network}}</td>
-		        <td>{{date}}</td>
-		        <td>{{job_id}}</td>
-		        <td id="status_{{job_id}}">{{status}}</td>
-				    <td><button type="button" class="{{buttonClass status}}" id="{{job_id}}"
-							data-complete-text="<i class='fa fa-circle-o-notch fa-spin'></i> CANCELLED"
-							data-cancelling-text="<i class='fa fa-circle-o-notch fa-spin'></i> Cancelling Job"
-							{{buttonState status}}>{{buttonValue status}}</button></td>
+		        <td>{{user_name}}</td>
+		        <td>{{password}}</td>
+		        <td>{{role}}</td>
+		        <td id="status_{{id}}">{{status}}</td>
+				    <td><button type="button" class="{{buttonClass status}}" id="{{id}}"
+								data-activated-text="<i class='fa fa-circle-o-notch fa-spin'></i> De-Activate"
+								data-activating-text="<i class='fa fa-circle-o-notch fa-spin'></i> Activating"
+								data-deactivated-text="<i class='fa fa-circle-o-notch fa-spin'></i> Activate"
+								data-deactivating-text="<i class='fa fa-circle-o-notch fa-spin'></i> De-Activating"
+								{{buttonState status}}>{{buttonValue status}}</button></td>
 						</td>
-		        <input type = "hidden" name = "job_id" value = "{{job_id}} " />
 		      </tr>
 		      </form>
 		      {{/each}}
@@ -95,39 +91,61 @@ $(document).ready(function() {
 });
 
 $('.btn').on('click', function() {
-	 var job_id = this.id;
+	 var id = this.id;
 	 var $this = $(this);
-	 $this.button('cancelling');
+	 var url = ''
+	 var futureState = ''
+	 var btnClassRemove = ''
+	 var btnClassAdd = ''
+	 var transitionButtonAction = ''
+	 //$this.button('activating');
+	 console.log(document.getElementById("status_" + id).innerText)
+	 if(document.getElementById("status_" + id).innerText == 'INACTIVE') {
+		 url = '/manageuser?id=' + id + '&operation=activate'
+		 futureState = 'ACTIVE'
+		 futureButtonAction = 'activated'
+		 transitionButtonAction = 'activating'
+		 btnClassRemove = 'btn-success'
+		 btnClassAdd = 'btn-danger'
+	 } else {
+		 url = '/manageuser?id=' + id + '&operation=deactivate'
+		 futureState = 'INACTIVE'
+		 futureButtonAction = 'deactivated'
+		 transitionButtonAction = 'deactivating'
+		 btnClassRemove = 'btn-danger'
+		 btnClassAdd = 'btn-success'
+	 }
+	 console.log(url)
 	 var xhr = new XMLHttpRequest();
-	 xhr.open("GET", "/cancel?job_id=" + job_id, true);
+	 xhr.open("GET", url, true);
+	 $this.button(transitionButtonAction);
 	 xhr.onload = function (e) {
 	   if (xhr.readyState === 4) {
 	     if (xhr.status === 200) {
 				 var data=JSON.parse(xhr.responseText);
 				 setTimeout(function() {
-					 console.log(data['updatedRows'])
-					 if(data['updatedRows'] == 1) {
-						 $this.button('complete');
-						 document.getElementById("status_" + job_id).innerHTML = "CANCELLED";
-						 document.getElementById(job_id).disabled=true;
-						 document.getElementById(job_id).classList.remove('btn-info');
-						 document.getElementById(job_id).classList.add('btn-danger');
-					 } else {
-						 document.getElementById("status_" + job_id).innerHTML = "CANCEL FAILED";
-						 document.getElementById(job_id).disabled=true;
+					 console.log(data['status'])
+					 if(data['status'] == 1) {
+						 $this.button(futureButtonAction);
+						 document.getElementById("status_" + id).innerHTML = futureState;
+						 document.getElementById(id).classList.remove(btnClassRemove);
+						 document.getElementById(id).classList.add(btnClassAdd);
+					 } else if (data['status'] == -1) {
+						 document.getElementById("status_" + id).innerHTML = "Opeartion FAILED";
+						 document.getElementById(id).disabled=true;
 						 setTimeout(function() {
-							 document.getElementById(job_id).disabled=false;
+							 document.getElementById(id).disabled=false;
 						 },2000)
 					 }
 
 				 }, 3000);
 	     } else {
-	       console.error(xhr.statusText);
+	       console.error(xhr.responseText);
 	     }
 	   }
 	 };
 	 xhr.onerror = function (e) {
-	   console.error(xhr.statusText);
+	   console.error(xhr.responseText);
 	 };
 	 xhr.send(null);
 });

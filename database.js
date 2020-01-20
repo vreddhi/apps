@@ -144,6 +144,26 @@ class database {
   }
 
   /*
+  * Below function is used to execute sql
+  * @param : params
+  *
+  */
+  _runSql(sql, params = []) {
+    return new Promise((resolve, reject) => {
+      this.db_connection.run(sql, params, function(err, result) {
+        if (err) {
+          console.log('Error running sql: ' + sql)
+          console.log(err)
+          reject(err)
+        } else {
+          //changes is the property of sqlite3 library
+          resolve(this.changes)
+        }
+      })
+    })
+  }
+
+  /*
   * Below function is used to insert data to a table
   * @param : table_name
   * @return : Return -1 if failed, else total rows fetched
@@ -154,19 +174,18 @@ class database {
                   and version = ? and status = ?';
       var result = -1
       console.log('Fetching count');
-      this.db_connection.each(sql, [config_name, config_version, status], (err, row) => {
+      this.db_connection.get(sql, [config_name, config_version, status], (err, row) => {
           if (err) {
             console.log(err);
             console.log('Unable to fecth data from table.');
             reject(result)
           } else {
             result = row.total
+            console.log(result)
             resolve(result)
           }
-       });
-
-
-    });
+       })
+    })
   }
 
 }
