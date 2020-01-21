@@ -1,5 +1,5 @@
 var fs = require('fs');
-
+var search = require('./search.js')
 const sendmail = require('sendmail')({
   silent: true
 });
@@ -40,25 +40,55 @@ class mail {
   _triggerEmails(schedulerObj, job_id='') {
     var emailBody = null
     return new Promise((resolve, reject) => {
-      //Construct reviwer email body
-      this._getContent('reviewer', schedulerObj, job_id)
-          .then((emailBody) => {
-            console.log('Send email to reviewer')
-            this._sendEmail('apps@akamai.com',
-                            schedulerObj.reviewer_email,
-                            'Activation',
-                            emailBody)
-          })
+      if (schedulerObj.email_context == 'final_notification') {
+        searchObj = new search()
+        console.log("job_id = "+ job_id);
+        searchObj._findScheduleByJobId(job_id)
+        .then((result) => {
+          var dataRows = result['queryResult']
+          console.log("dataRows status = "+ dataRows[0].status);
+          if (dataRows[0].status == 'SCHEDULED') {
+            //Construct reviwer email body
+            this._getContent('reviewer', schedulerObj, job_id)
+                .then((emailBody) => {
+                  console.log('Send email to reviewer')
+                  this._sendEmail('apps@akamai.com',
+                                  schedulerObj.reviewer_email,
+                                  'Activation',
+                                  emailBody)
+                })
+            //Construct submitter email body
+            this._getContent('submitter', schedulerObj, job_id)
+                .then((emailBody) => {
+                  console.log('Send email to submitter')
+                  this._sendEmail('apps@akamai.com',
+                                  schedulerObj.submitter_email,
+                                  'Activation',
+                                  emailBody)
+                })
+          }
+        })
+      }else{
+        //Construct reviwer email body
+        this._getContent('reviewer', schedulerObj, job_id)
+            .then((emailBody) => {
+              console.log('Send email to reviewer')
+              this._sendEmail('apps@akamai.com',
+                              schedulerObj.reviewer_email,
+                              'Activation',
+                              emailBody)
+            })
 
-      //Construct submitter email body
-      this._getContent('submitter', schedulerObj, job_id)
-          .then((emailBody) => {
-            console.log('Send email to submitter')
-            this._sendEmail('apps@akamai.com',
-                            schedulerObj.submitter_email,
-                            'Activation',
-                            emailBody)
-          })
+        //Construct submitter email body
+        this._getContent('submitter', schedulerObj, job_id)
+            .then((emailBody) => {
+              console.log('Send email to submitter')
+              this._sendEmail('apps@akamai.com',
+                              schedulerObj.submitter_email,
+                              'Activation',
+                              emailBody)
+            })
+        }
       resolve('Email sent successfully')
 
     })
@@ -90,6 +120,11 @@ class mail {
           var tex_to_replace = ''
         }else if (schedulerObj.email_context == 'cancel_notification') {
           var main_email_message_1 = 'The below schedule has been cancelled by submitter.'
+          main_email_message_2 = ''
+          var tex_to_replace = ''
+        }
+        else if (schedulerObj.email_context == 'final_notification') {
+          var main_email_message_1 = 'Activation for below schedule will start in 30 minutes.'
           main_email_message_2 = ''
           var tex_to_replace = ''
         }else {

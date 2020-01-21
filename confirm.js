@@ -3,6 +3,8 @@ const path = require('path');
 const sqlite3 = require('sqlite3');
 var Rubidium = require('rubidium');
 var rb = new Rubidium();
+var rb_email_notif = new Rubidium();
+var mail = require('./mail.js')
 var database = require('./database.js')
 
 class confirm {
@@ -145,10 +147,40 @@ class confirm {
                   console.log(err)
                 }
             });
+            // Add job to trigger email 30 minutes before activation
+            rb_email_notif.on('job', job => {
+                console.log(job.message)
+                try {
+                    var schedulerObj = {reviewer_email:reviewer_email,
+                                        submitter_email:submitter_email,
+                                        config_name:config_name,
+                                        config_version:versionId,
+                                        actvn_date_time:actvn_date_time,
+                                        actvn_network:env,
+                                        sdpr_link:result[0].sdpr,
+                                        customer_email:result[0].customer,
+                                        notification_email:result[0].notification,
+                                        account_switch_key:result[0].switchkey,
+                                        job_id:result[0].job_id,
+                                        email_context:"final_notification"
+                                        };
+                    sendEmails = new mail()._triggerEmails(schedulerObj, job_id=result[0].job_id)
+                                           .catch((emailResult) => {
+                                             result['responseText'] = result['responseText'] +
+                                                                      '.\nUnable to send emails'
+                                           })
+                } catch(err) {
+                  console.log(err)
+                }
+            });
             var actvn_date_time_epoch = new Date(actvn_date_time);
             actvn_date_time_epoch = actvn_date_time_epoch.getTime();
-            //rb.add({ time: actvn_date_time_epoch , message: 'Scheduled Activation' });
-            rb.add({ time: Date.now() + 1000, message: 'Scheduled Activation' });
+            rb.add({ time: actvn_date_time_epoch , message: 'Scheduled Activation' });
+            //rb.add({ time: Date.now() + 1000, message: 'Scheduled Activation' });
+            var thirtyminutesbefore = actvn_date_time_epoch - 30 * 60 * 1000;
+            if (thirtyminutesbefore > Date.now()) {
+              rb_email_notif.add({ time: thirtyminutesbefore , message: 'Final Email Notification' });
+            }
             resolve('Success');
           }
           catch(err) {
