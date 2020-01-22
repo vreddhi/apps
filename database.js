@@ -2,10 +2,11 @@ const path = require('path');
 const sqlite3 = require('sqlite3');
 
 class database {
-  /*
+
+  /**
   * Below function is used to instantiate the database
   *
-  */
+  **/
   setup() {
     return new Promise((resolve,reject) => {
         const dbPath = path.resolve(__dirname, 'apps.db')
@@ -21,7 +22,7 @@ class database {
   }
 
   /*
-  * Below function is used to instantiate the database
+  * Below function is used to close the database connection
   *
   */
   _shutdown() {
@@ -32,9 +33,9 @@ class database {
     });
   }
 
-  /*
+  /**
   * Below function is used to create a table
-  * @param : table_name
+  * @param table_name - This function creates the ALL_ACTIVATIONS table
   */
   createTable(table_name) {
     return new Promise((resolve, reject) => {
@@ -56,11 +57,20 @@ class database {
 
   }
 
-  /*
+  /**
   * Below function is used to insert data to a table
-  * @param : job_id,config_name, config_version, actvn_date_time,
-  *          sdpr_link, reviewer_email, submitter_email, customer_email,
-  *          notification_email, account_switch_key, actvn_network, status
+  * @param job_id - Unique Scheduled Job Identifier
+  * @param config_name - Configuration name
+  * @param config_version
+  * @param actvn_date_time
+  * @param sdpr_link
+  * @param reviewer_email
+  * @param submitter_email
+  * @param customer_email
+  * @param notification_email
+  * @param account_switch_key
+  * @param actvn_network
+  * @param status
   * @return : True/False
   */
   insertData(job_id,config_name, config_version, actvn_date_time,
@@ -84,7 +94,7 @@ class database {
       });
   }
 
-  /*
+  /**
   * Below function is used to execute DB query
   * @param : params
   * @return : Return result
@@ -104,7 +114,7 @@ class database {
   }
 
 
-  /*
+  /**
   * Below function is used to fetch multiple rows
   * @param : params
   * @return : Return result with multiple row
@@ -123,7 +133,7 @@ class database {
     })
   }
 
-  /*
+  /**
   * Below function is used to updata a table
   * @param : params
   *
@@ -143,7 +153,7 @@ class database {
     })
   }
 
-  /*
+  /**
   * Below function is used to execute sql
   * @param : params
   *
@@ -163,7 +173,7 @@ class database {
     })
   }
 
-  /*
+  /**
   * Below function is used to insert data to a table
   * @param : table_name
   * @return : Return -1 if failed, else total rows fetched

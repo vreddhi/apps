@@ -2,8 +2,6 @@ const activation = require('./activation.js')
 const path = require('path');
 const sqlite3 = require('sqlite3');
 var Rubidium = require('rubidium');
-var rb = new Rubidium();
-var rb_email_notif = new Rubidium();
 var mail = require('./mail.js')
 var database = require('./database.js')
 
@@ -101,6 +99,8 @@ class confirm {
   _approveJob(result, db) {
     return new Promise((resolve, reject) => {
           //Validate Property one last time with API calls and schedule it
+          var rb = new Rubidium();
+          var rb_email_notif = new Rubidium();
           console.log(result)
           try {
             let config_name = result[0].config_name
