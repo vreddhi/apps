@@ -15,7 +15,7 @@ var user = require('./user.js')
 
 var hbs = exphbs.create({
     helpers: {
-        buttonState: function (status) {
+        buttonState: function (status, submitter, reviewer) {
             return '';
         },
         buttonValue: function (status) {
@@ -100,11 +100,11 @@ app.post('/login',(req,res) => {
            if(req.body.remember_me == 'on') {
              //Set a longer cookie as user wants to be logged in
              res.cookie('session', some_random_number, { expires: new Date(Date.now() + 900000000)})
-                .cookie('userid', req.body.email, { expires: new Date(Date.now() + 900000000)})
+                .cookie('user_name', req.body.email, { expires: new Date(Date.now() + 900000000)})
                 .render('main/homepage')
            } else {
              res.cookie('session', some_random_number)
-                .cookie('userid', req.body.email)
+                .cookie('user_name', req.body.email)
                 .render('main/homepage')
            }
          })
@@ -180,7 +180,17 @@ app.use('/manageuser', (req,res) => {
   userObj = new user()
   userObj._manageUser(req.query.id, req.query.operation)
             .then((result) => {
+                console.log(result)
                 console.log('User status is now updated.')
+                //Send emails to user
+                sendEmailsObj = new mail()
+                sendEmailsObj._getUserUpdateContent(result['data'], req.query.operation)
+                             .then((content) => {
+                               sendEmailsObj._sendEmail('apps@akamai.com', result['data'], 'New User', content)
+                             })
+                             .catch((emailResult) => {
+                               console.log('Unable to send email to approver.')
+                             })
                 res.json({ 'status': 1})
               })
             .catch((result) => {
@@ -280,39 +290,59 @@ app.use('/searchandcancel',(req, res) => {
                 res.render('main/searchFailure' , { responseText } );
               } else {
                 //We got some results to display
-                res.render('main/searchresult', {dataRows,
-                                                // Override `foo` helper only for this rendering.
-                                                helpers: {
-                                                            buttonState: function (status) {
-                                                              //If one of below values, disable the button by returning bootstrap class
-                                                              if(['CANCELLED','FAILED','COMPLETED', 'IN_PROGRESS'].indexOf(status) > -1) {
-                                                                return 'disabled'
-                                                              } else {
-                                                                return ''
-                                                              }
-                                                            },
-                                                            buttonValue: function(status) {
-                                                              //For below status allow cancel
-                                                              if(['PENDING_APPROVAL','SCHEDULED'].indexOf(status) > -1) {
-                                                                return 'Cancel'
-                                                              } else {
-                                                                return status
-                                                              }
-                                                            },
-                                                            buttonClass: function(status) {
-                                                              //return bootstrap button class
-                                                              var btn_class = 'btn btn-info btn-lg'
-                                                              if(['COMPLETED'].indexOf(status) > -1) {
-                                                                btn_class = 'btn btn-success btn-lg'
-                                                              } else if(['FAILED'].indexOf(status) > -1) {
-                                                                btn_class = 'btn btn-dark btn-lg'
-                                                              } else if(['CANCELLED'].indexOf(status) > -1) {
-                                                                btn_class = 'btn btn-danger btn-lg'
-                                                              }
-                                                              return btn_class
-                                                            }
-                                                          }
-                                                });
+                //Get all admin emails, as only ADMINs, submitter and reviewer can cancel job
+                valid_users = []
+                userObj = new user()
+                userObj._getAdmins()
+                       .then((dbData) => {
+                         console.log(dbData)
+                         res.render('main/searchresult', {dataRows,
+                                                         // Override helper only for this rendering.
+                                                         helpers: {
+                                                                     buttonState: function (status, submitter, reviewer) {
+                                                                        //Reviewer and submitter are valid
+                                                                        valid_users = []
+                                                                        dbData['data'].forEach((row) => {
+                                                                          //push admin user email
+                                                                          valid_users.push(row['user_name'])
+                                                                        })
+                                                                        valid_users.push(submitter)
+                                                                        valid_users.push(reviewer)
+                                                                        console.log(valid_users)
+                                                                        if(valid_users.indexOf(req.cookies.user_name) < 0 ) {
+                                                                          //Disable button is its not submitter or reviewer or Admin
+                                                                          console.log('INSIDE')
+                                                                          return 'disabled'
+                                                                        } else if(['CANCELLED','FAILED','COMPLETED', 'IN_PROGRESS'].indexOf(status) > -1) {
+                                                                          //If one of values, disable the button by returning bootstrap class
+                                                                          return 'disabled'
+                                                                        } else {
+                                                                          return ''
+                                                                        }
+                                                                     },
+                                                                     buttonValue: function(status) {
+                                                                       //For below status allow cancel
+                                                                       if(['PENDING_APPROVAL','SCHEDULED'].indexOf(status) > -1) {
+                                                                         return 'Cancel'
+                                                                       } else {
+                                                                         return status
+                                                                       }
+                                                                     },
+                                                                     buttonClass: function(status) {
+                                                                       //return bootstrap button class
+                                                                       var btn_class = 'btn btn-info btn-lg'
+                                                                       if(['COMPLETED'].indexOf(status) > -1) {
+                                                                         btn_class = 'btn btn-success btn-lg'
+                                                                       } else if(['FAILED'].indexOf(status) > -1) {
+                                                                         btn_class = 'btn btn-dark btn-lg'
+                                                                       } else if(['CANCELLED'].indexOf(status) > -1) {
+                                                                         btn_class = 'btn btn-danger btn-lg'
+                                                                       }
+                                                                       return btn_class
+                                                                     }
+                                                                   }
+                                                         });
+                       })
               }
            })
            .catch((result) => {

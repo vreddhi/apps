@@ -126,6 +126,33 @@ class user {
 
   }
 
+  /**
+  * Below function is used to get all admin users
+  *
+  **/
+  _getAdmins() {
+    return new Promise((resolve, reject) => {
+      var db = new database();
+      db.setup()
+        .then((data) => {
+            var sql = `SELECT *
+                    FROM USERS where role = 'ADMIN'`;
+            db._fetchMultipleRows(sql, [])
+              .then((result) => {
+                //DB Query response is a list/array of rows
+                this.response['responseText'] = 'Admins resolved'
+                this.response['data'] = result
+                resolve(this.response)
+              })
+              .catch((result) => {
+                reject(this.response)
+              })
+        })
+    })
+
+  }
+
+
   _manageUser(id, operation) {
     //console.log(operation)
     return new Promise((resolve, reject) => {
@@ -142,11 +169,14 @@ class user {
             futureStatus = 'INACTIVE'
           }
 
-          var sql = `select status from USERS
+          var sql = `select user_name, status from USERS
                         WHERE id = ? and status =  '${searchForStatus}'`;
           db._fetchMultipleRows(sql, [id])
             .then((data) => {
               if(data.length == 1) {
+                //Ensure only 1 user is returned
+                //Get the email id and resolve it to send emails
+                this.response['data'] = data[0]['user_name']
                 var sql = `UPDATE USERS
                             SET status = '${futureStatus}'
                             WHERE id = ?`;
@@ -156,13 +186,13 @@ class user {
                     //Some FAKE Wait time :)
                     this._sleep(3000)
                         .then(() => {
-                          this.response['responseText'] = 'User Activated'
+                          this.response['responseText'] = 'User updated'
                           resolve(this.response)
                         })
                   })
 
               } else {
-                this.response['responseText'] = 'User does not exist or is already ACTIVE.'
+                this.response['responseText'] = 'User does not exist or is already updated.'
                 reject(this.response)
               }
 

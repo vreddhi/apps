@@ -6,7 +6,7 @@ const sendmail = require('sendmail')({
 
 
 class mail {
-  /*
+  /**
   * Below function is used to send email
   * @param : from
   * @param : to
@@ -32,10 +32,8 @@ class mail {
   /**
   * Below function is used to construct Email body
   * for submitter and reviewer
-  * @param from
-  * @param to
-  * @param subject
-  * @param body
+  * @param schedulerObj
+  * @param job_id
   **/
   _triggerEmails(schedulerObj, job_id='') {
     var emailBody = null
@@ -96,10 +94,9 @@ class mail {
 
   /**
   * Below function is used to construct Email body
-  * @param : from
-  * @param : to
-  * @param : subject
-  * @param : body
+  * @param : toWhom
+  * @param : schedulerObj
+  * @param : job_id
   **/
   _getContent(toWhom, schedulerObj, job_id) {
     return new Promise((resolve,reject) => {
@@ -149,10 +146,8 @@ class mail {
 
   /**
   * Below function is used to construct Email body
-  * @param : from
-  * @param : to
-  * @param : subject
-  * @param : body
+  * @param : user_name - User email of account creator
+  * @param : server URL to manage users
   **/
   _getUserApprovalContent(user_name, app_location) {
     return new Promise((resolve,reject) => {
@@ -160,6 +155,26 @@ class mail {
       fs.readFile('./static/userApprovalContent.html', 'utf8', function(err, contents) {
           contents = contents.replace('{{User Name}}',user_name)
           contents = contents.replace('{{Approval}}',app_location)
+          resolve(contents)
+      })
+    })
+  }
+
+  /**
+  * Below function is used to construct Email body for approved user
+  * @param : user_name - User email of account owner
+  * @param : operation - Either activate or deactivate
+  **/
+  _getUserUpdateContent(user_name, operation) {
+    console.log(operation)
+    return new Promise((resolve,reject) => {
+      fs.readFile('./static/userApprovedContent.html', 'utf8', function(err, contents) {
+          contents = contents.replace('{{User Name}}',user_name)
+          if(operation == 'activate') {
+            contents = contents.replace('{{message}}','Your user account has been approved.')
+          } else {
+            contents = contents.replace('{{message}}','Your user account has been de-activated/deleted.')
+          }
           resolve(contents)
       })
     })
