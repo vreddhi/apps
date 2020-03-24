@@ -127,8 +127,8 @@ class mail {
         }else {
           if(toWhom == 'reviewer') {
             var main_email_message_1 = 'Here are the details of Activation Scheduled awaiting your approval'
-            var tex_to_replace = '<p>Click the below Confirmation link to schedule the Activation.</p>' +
-                                 'http://localhost:3000/confirm?job_id=' + job_id
+            var tex_to_replace = '<p>Click the below URL or log into APPS to approve the Schedule.</p>' +
+                                 'http://localhost:3000/approvals'
           }
           if(toWhom == 'submitter') {
             var main_email_message_1 = 'Here are the details of Activation Scheduled for you'

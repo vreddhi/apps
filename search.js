@@ -66,6 +66,31 @@ class search {
     })
 
   }
+
+  /*
+  * Below function is used to find scheduled data for a configuration by reviewer_email
+  * @param : reviewer_email
+  */
+  _findScheduleByReviewer(reviewer_email) {
+    return new Promise((resolve, reject) => {
+      var db = new database();
+      db.setup()
+        .then((data) => {
+            var sql = `SELECT *
+                    FROM ALL_ACTIVATIONS
+                    WHERE status = "PENDING_APPROVAL" and reviewer = ? `;
+            db._fetchMultipleRows(sql, [reviewer_email])
+              .then((result) => {
+                //DB Query response is a list/array of rows
+                this.response['queryResult'] = result
+                resolve(this.response)
+              })
+              .catch((result) => {
+                reject(this.response)
+              })
+        })
+    })
+  }
 }
 
 module.exports = search

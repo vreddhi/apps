@@ -14,7 +14,8 @@ class confirm {
   */
   constructor(){
     this.response = {
-      'responseText' : 'Reason: Generic Error'
+      'responseText' : 'Reason: Generic Error',
+      'updatedRows' : ''
     }
   }
 
@@ -46,6 +47,7 @@ class confirm {
                             WHERE job_id = ?`;
                 db._updateTable(sql, [req.query.job_id])
                   .then((result) => {
+                    this.response['updatedRows'] = result
                     //We are not interested in DB result values
                     //Proceed further if the query is success
                     console.log('Updated DB, fetching config details from DB')

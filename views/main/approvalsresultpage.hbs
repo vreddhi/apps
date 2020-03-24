@@ -76,9 +76,9 @@
 		        <td>{{job_id}}</td>
 		        <td id="status_{{job_id}}">{{status}}</td>
 				    <td><button type="button" class="{{buttonClass status}}" id="{{job_id}}"
-							data-complete-text="<i class='fa fa-circle-o-notch fa-spin'></i> CANCELLED"
-							data-cancelling-text="<i class='fa fa-circle-o-notch fa-spin'></i> Cancelling Job"
-							{{buttonState status submitter reviewer}}>{{buttonValue status}}</button></td>
+							data-complete-text="<i class='fa fa-circle-o-notch fa-spin'></i> APPROVED"
+							data-cancelling-text="<i class='fa fa-circle-o-notch fa-spin'></i> Approving Job"
+							{{buttonState status}}>{{buttonValue status}}</button></td>
 						</td>
 		        <input type = "hidden" name = "job_id" value = "{{job_id}} " />
 		      </tr>
@@ -102,7 +102,7 @@ $('.btn').on('click', function() {
 	 var $this = $(this);
 	 $this.button('cancelling');
 	 var xhr = new XMLHttpRequest();
-	 xhr.open("GET", "/cancel?job_id=" + job_id, true);
+	 xhr.open("GET", "/confirm?job_id=" + job_id, true);
 	 xhr.onload = function (e) {
 	   if (xhr.readyState === 4) {
 	     if (xhr.status === 200) {
@@ -111,7 +111,7 @@ $('.btn').on('click', function() {
 					 console.log(data['updatedRows'])
 					 if(data['updatedRows'] == 1) {
 						 $this.button('complete');
-						 document.getElementById("status_" + job_id).innerHTML = "CANCELLED";
+						 document.getElementById("status_" + job_id).innerHTML = "SCHEDULED";
 						 document.getElementById(job_id).disabled=true;
 						 document.getElementById(job_id).classList.remove('btn-info');
 						 document.getElementById(job_id).classList.add('btn-danger');

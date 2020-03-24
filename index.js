@@ -261,7 +261,8 @@ app.use('/confirm', (req,res) => {
                                        })
               })
               responseText = result['responseText']
-              res.render('main/confirmresult', { responseText });
+              //res.render('main/confirmresult', { responseText });
+              res.json({ 'updatedRows': result['updatedRows']})
             })
             .catch((result) => {
               //Use a different template for the failure response
@@ -287,7 +288,9 @@ app.use('/searchandcancel',(req, res) => {
               if(dataRows.length < 1) {
                 //We got NOTHING to display
                 var responseText = 'Activation details of ' + req.body.config_name + ' configuration is not found'
-                res.render('main/searchFailure' , { responseText } );
+                dataRows = [{config_name: 'No schedules found matching the configuration name'}]
+                //res.render('main/searchFailure' , { responseText } );
+                res.render('main/searchresult' , { dataRows } );
               } else {
                 //We got some results to display
                 //Get all admin emails, as only ADMINs, submitter and reviewer can cancel job
@@ -391,7 +394,53 @@ app.use('/cancel', (req, res) => {
            })
 })
 
-
+//Route to approvals page results
+app.use('/approvals',(req, res) => {
+  searchObj = new search()
+  searchObj._findScheduleByReviewer(req.cookies.user_name)
+           .then((result) => {
+              //Fetch the version, date, job_id, status from the result and use it
+              var dataRows = result['queryResult']
+              if(dataRows.length < 1) {
+                //We got NOTHING to display
+                dataRows = [{config_name: 'No schedules found awating your approval'}]
+                //var responseText = 'Approval details for user  is not found'
+                res.render('main/approvalsresultpage' , { dataRows } );
+              } else {
+                //We got some results to display
+                //Get all admin emails, as only ADMINs, submitter and reviewer can cancel job
+                         res.render('main/approvalsresultpage', {dataRows,
+                                                         // Override helper only for this rendering.
+                                                         helpers: {
+                                                                    buttonState: function (status) {
+                                                                        return ''
+                                                                     },
+                                                                     buttonValue: function(status) {
+                                                                       //For below status allow cancel
+                                                                       return 'Approve'
+                                                                     },
+                                                                     buttonClass: function(status) {
+                                                                       //return bootstrap button class
+                                                                       var btn_class = 'btn btn-info btn-lg'
+                                                                       if(['COMPLETED'].indexOf(status) > -1) {
+                                                                         btn_class = 'btn btn-success btn-lg'
+                                                                       } else if(['FAILED'].indexOf(status) > -1) {
+                                                                         btn_class = 'btn btn-dark btn-lg'
+                                                                       } else if(['CANCELLED'].indexOf(status) > -1) {
+                                                                         btn_class = 'btn btn-danger btn-lg'
+                                                                       }
+                                                                       return 'btn btn-success btn-lg'
+                                                                     }
+                                                                   }
+                                                         });
+              }
+           })
+           .catch((result) => {
+             //This is a failure scenario. _findSchedule function resulted in Failure for some reason
+             var responseText = 'Activation details of ' + req.body.config_name + ' Configuration is not found'
+             res.render('main/searchFailure' , { responseText } );
+           })
+})
 
 //start server
 http.createServer(app).listen(app.get('port'), function () {
