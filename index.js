@@ -12,6 +12,7 @@ var search = require('./search.js')
 var cancel = require('./cancel.js')
 var database = require('./database.js')
 var user = require('./user.js')
+var reschedule = require('./reschedule.js')
 
 var hbs = exphbs.create({
     helpers: {
@@ -126,8 +127,7 @@ app.all('/logout', (req, res) => {
 
 //Route user management
 app.use('/usermanagement', (req,res) => {
-
-  if(['vreddhi.bhat@gmail.com','vbhat@akamai.com','hmallika@akamai.com'].indexOf(req.cookies.userid) > -1) {
+  if(['vreddhi.bhat@gmail.com','vbhat@akamai.com','hmallika@akamai.com'].indexOf(req.cookies.user_name) > -1) {
     //Valid admin user, so display all users to approve/deny
     config_name = req.body.config_name
     userObj = new user()
@@ -442,7 +442,17 @@ app.use('/approvals',(req, res) => {
            })
 })
 
+
 //start server
 http.createServer(app).listen(app.get('port'), function () {
-   console.log('starting server on port '+app.get('port'));
- });
+console.log('starting server on port '+app.get('port'));
+// Rescheduling jobs  on server restart
+rescheduleObj = new reschedule();
+rescheduleObj._rescheduleJobsOnServerStart()
+             .then((data) => {
+               console.log(data.responseText);
+            })
+              .catch((data) => {
+                console.log(data.responseText);
+            })
+});
